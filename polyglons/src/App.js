@@ -79,17 +79,12 @@ function CoolTube() {
   );
 }
 
-function Box() {
+function Sphere() {
+  const texture = useLoader(THREE.TextureLoader, "./daniel_ritchie_face.jpg");
   return (
     <mesh>
       <sphereGeometry args={[2, 64, 64]} />
-      <meshPhongMaterial
-        color="blue"
-        specular="#882"
-        roughness="0.0"
-        // diffuse="#"
-        // emissive="#afa"
-      />
+      <meshBasicMaterial map={texture} />
     </mesh>
   );
 } // https://threejs.org/docs/#api/en/objects/Mesh
@@ -100,8 +95,40 @@ function Box() {
 
 // first person camera https://www.youtube.com/watch?v=oqKzxPMLWxo
 // third person camera https://www.youtube.com/watch?v=UuNPHOJ_V5o
+
+// music https://www.youtube.com/watch?v=T43D0M8kHFw
+
+// playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 function App() {
   const gltf = useLoader(GLTFLoader, "./models/i_love_graphics.glb");
+
+  // https://threejs.org/docs/#api/en/core/BufferGeometry
+  const vertices = new Float32Array([
+    -1.0,
+    -1.0,
+    1.0, // v0
+    1.0,
+    -1.0,
+    1.0, // v1
+    1.0,
+    1.0,
+    1.0, // v2
+    -1.0,
+    1.0,
+    1.0, // v3
+  ]);
+
+  const indices = [0, 1, 2, 2, 3, 0];
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setIndex(indices);
+  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    side: THREE.DoubleSide,
+  });
+  // const texture = useLoader(THREE.TextureLoader, "./daniel_ritchie_face.jpg");
+  // https://sbcode.net/react-three-fiber/use-loader/
 
   return (
     <Canvas>
@@ -109,12 +136,15 @@ function App() {
       <pointLight position={[10, 10, 10]} intensity="300" />
       <CoolTube />
 
+      <mesh geometry={geometry} material={material} />
+
       <primitive
         object={gltf.scene}
         position={[0, 1, 0]}
         children-0-castShadow
       />
       <GlowingSphere />
+      {/* <Sphere /> */}
       <EffectComposer>
         <Bloom intensity={2} luminanceThreshold={0} luminanceSmoothing={0.9} />
       </EffectComposer>
