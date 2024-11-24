@@ -144,7 +144,7 @@ function App() {
 
   return (
     <Canvas>
-      <ambientLight intensity={1} />
+      <ambientLight intensity={0} />
       <pointLight position={[10, 10, 10]} intensity="300" />
       {/* <CoolTube /> */}
       <Terrain/>
@@ -158,9 +158,9 @@ function App() {
       />
       {/* <GlowingSphere />
       <Sphere /> */}
-      <EffectComposer>
+      {/* <EffectComposer>
         <Bloom intensity={2} luminanceThreshold={0} luminanceSmoothing={0.9} />
-      </EffectComposer>
+      </EffectComposer> */}
       <PointerLockControls dragToLook={true} lookSpeed={0.05} />
       <FlyControls autoForward={false} movementSpeed={2} />
     </Canvas>
