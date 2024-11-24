@@ -145,7 +145,7 @@ function App() {
   return (
     <Canvas>
       <ambientLight intensity={0} />
-      <pointLight position={[10, 10, 10]} intensity="300" />
+      <pointLight position={[0, 10, 0]} intensity="300" />
       {/* <CoolTube /> */}
       <Terrain/>
 
