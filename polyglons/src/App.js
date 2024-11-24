@@ -14,18 +14,30 @@ import { useRef, useEffect } from "react";
 import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import { createTerrain } from './components/perlinTerrain.js';
 
 // https://sbcode.net/react-three-fiber/gltfloader/
-function CameraPosition() {
-  const { camera } = useThree();
-  useEffect(() => {
-    const logPosition = () => {
-      console.log(`Camera Position:`, camera.position); // Logs the camera position
-    };
-    const interval = setInterval(logPosition, 1000); // Log every second
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [camera]);
+
+function Terrain() {
+  const terrainRef = useRef();
+  React.useEffect(() => {
+    const terrain = createTerrain();
+    terrainRef.current.add(terrain);
+  }, []);
+
+  return <mesh ref={terrainRef} />;
 }
+
+// function CameraPosition() {
+//   const { camera } = useThree();
+//   useEffect(() => {
+//     const logPosition = () => {
+//       console.log(`Camera Position:`, camera.position); // Logs the camera position
+//     };
+//     const interval = setInterval(logPosition, 1000); // Log every second
+//     return () => clearInterval(interval); // Cleanup on unmount
+//   }, [camera]);
+// }
 function GlowingSphere() {
   return (
     <mesh>
@@ -134,17 +146,18 @@ function App() {
     <Canvas>
       <ambientLight intensity={1} />
       <pointLight position={[10, 10, 10]} intensity="300" />
-      <CoolTube />
+      {/* <CoolTube /> */}
+      <Terrain/>
 
-      <mesh geometry={geometry} material={material} />
+      {/* <mesh geometry={geometry} material={material} /> */}
 
       <primitive
         object={gltf.scene}
         position={[0, 1, 0]}
         children-0-castShadow
       />
-      <GlowingSphere />
-      {/* <Sphere /> */}
+      {/* <GlowingSphere />
+      <Sphere /> */}
       <EffectComposer>
         <Bloom intensity={2} luminanceThreshold={0} luminanceSmoothing={0.9} />
       </EffectComposer>
