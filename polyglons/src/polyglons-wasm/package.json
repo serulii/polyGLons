@@ -11,13 +11,11 @@
   "files": [
     "polyglons_wasm_bg.wasm",
     "polyglons_wasm.js",
-    "polyglons_wasm_bg.js",
     "polyglons_wasm.d.ts"
   ],
   "main": "polyglons_wasm.js",
   "types": "polyglons_wasm.d.ts",
   "sideEffects": [
-    "./polyglons_wasm.js",
     "./snippets/*"
   ]
 }
