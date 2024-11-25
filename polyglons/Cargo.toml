@@ -1,0 +1,35 @@
+[package]
+name = "polyglons-wasm"
+version = "0.1.0"
+edition = "2021"
+description = "package for terrain generation and others"
+repository = "https://github.com/serulii/polyGLons"
+license = "Apache-2.0 OR MIT"
+
+[patch.crates-io]
+wasm-bindgen = { git = "https://github.com/rustwasm/wasm-bindgen" }
+
+[package.metadata.wasm-pack.profile.dev]
+wasm-opt = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+itertools = "0.13.0"
+serde = { version = "1.0.214", features = ["derive"] }
+serde_json = "1.0.132"
+wasm-bindgen = "0.2.95"
+
+[dependencies.nalgebra]
+version = "0.33.2"
+features = [ "serde-serialize" ]
+
+[dependencies.web-sys]
+version = "0.3.72"
+features = ["WebGl2RenderingContext", "console", "HtmlCanvasElement", "Window", "Document", "WebGlShader", "WebGlBuffer", "WebGlProgram", "WebGlUniformLocation"]
+
+[dependencies.bytemuck]
+version = "1.19.0"
+features = ["derive"]
+

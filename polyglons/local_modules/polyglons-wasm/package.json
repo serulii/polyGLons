@@ -1,0 +1,23 @@
+{
+  "name": "polyglons-wasm",
+  "type": "module",
+  "description": "package for terrain generation and others",
+  "version": "0.1.0",
+  "license": "Apache-2.0 OR MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/serulii/polyGLons"
+  },
+  "files": [
+    "polyglons_wasm_bg.wasm",
+    "polyglons_wasm.js",
+    "polyglons_wasm_bg.js",
+    "polyglons_wasm.d.ts"
+  ],
+  "main": "polyglons_wasm.js",
+  "types": "polyglons_wasm.d.ts",
+  "sideEffects": [
+    "./polyglons_wasm.js",
+    "./snippets/*"
+  ]
+}

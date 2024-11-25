@@ -16,11 +16,13 @@
     "react-scripts": "5.0.1",
     "simplex-noise": "^4.0.3",
     "three": "^0.170.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "polyglons-wasm": "file:./local_modules/polyglons-wasm"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-wasm": "wasm-pack build --dev --target bundler --out-dir target/polyglons-wasm && rm -rf target/polyglons-wasm/.gitignore local_modules/polyglons-wasm && cp -r target/polyglons-wasm local_modules",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
