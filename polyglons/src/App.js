@@ -15,6 +15,7 @@ import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { createTerrain } from './components/perlinTerrain.js';
+import { createSkybox } from "./components/skybox.js";
 
 // https://sbcode.net/react-three-fiber/gltfloader/
 
@@ -26,6 +27,16 @@ function Terrain() {
   }, []);
 
   return <mesh ref={terrainRef} />;
+}
+
+function Skybox() {
+  const skyboxRef = useRef();
+  React.useEffect(() => {
+    const skybox = createSkybox();
+    skyboxRef.current.add(skybox);
+  }, []);
+
+  return <mesh ref={skyboxRef} />
 }
 
 // function CameraPosition() {
@@ -145,9 +156,10 @@ function App() {
   return (
     <Canvas>
       <ambientLight intensity={0} />
-      <pointLight position={[0, 10, 0]} intensity="300" />
+      <pointLight position={[0, 15, 0]} intensity="300" />
       {/* <CoolTube /> */}
       <Terrain/>
+      <Skybox/>
 
       {/* <mesh geometry={geometry} material={material} /> */}
 
@@ -159,7 +171,7 @@ function App() {
       {/* <GlowingSphere />
       <Sphere /> */}
       {/* <EffectComposer>
-        <Bloom intensity={2} luminanceThreshold={0} luminanceSmoothing={0.9} />
+        <Bloom intensity={1} luminanceThreshold={0} luminanceSmoothing={0.9} />
       </EffectComposer> */}
       <PointerLockControls dragToLook={true} lookSpeed={0.05} />
       <FlyControls autoForward={false} movementSpeed={2} />

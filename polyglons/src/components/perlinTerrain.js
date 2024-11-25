@@ -3,7 +3,7 @@ import { createNoise2D } from 'simplex-noise';
 
 
 export function createTerrain() {
-    var geometry = new THREE.PlaneGeometry(20, 20, 20, 20);
+    var geometry = new THREE.PlaneGeometry(100, 100, 80, 80);
     var nonIndexedGeometry = geometry.toNonIndexed();
 
     const material = new THREE.MeshLambertMaterial({ 
