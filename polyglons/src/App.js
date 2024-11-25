@@ -16,8 +16,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { createTerrain } from './components/perlinTerrain.js';
 import { createSkybox } from "./components/skybox.js";
-
-import { get_number } from "polyglons-wasm"
+import init, { get_number } from "./polyglons-wasm/polyglons_wasm.js"
 
 // https://sbcode.net/react-three-fiber/gltfloader/
 
@@ -135,7 +134,8 @@ function App() {
   // const texture = useLoader(THREE.TextureLoader, "./daniel_ritchie_face.jpg");
   // https://sbcode.net/react-three-fiber/use-loader/
 
-  console.log(get_number())
+  init().then(() => console.log(get_number()));
+
   return (
     <Canvas>
       <ambientLight intensity={0} />
