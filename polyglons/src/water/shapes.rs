@@ -21,7 +21,7 @@ where
 {
     fn write_into<B: TriangleBuf>(&mut self, buf: &mut B) {
         let step_height = self.down.scale(1.0 / self.divide_height as f32);
-        let step_width = self.down.scale(1.0 / self.divide_width as f32);
+        let step_width = self.right.scale(1.0 / self.divide_width as f32);
         for r in 0..self.divide_height {
             for c in 0..self.divide_width {
                 let top_left =
@@ -59,7 +59,7 @@ where
 {
     fn write_into<B: TriangleBuf>(&mut self, buf: &mut B) {
         let step_height = self.down.scale(1.0 / self.resolution_height as f32);
-        let step_width = self.down.scale(1.0 / self.resolution_width as f32);
+        let step_width = self.right.scale(1.0 / self.resolution_width as f32);
         for r in 0..self.resolution_height {
             for c in 0..self.resolution_width {
                 Tile {
@@ -93,8 +93,8 @@ where
     fn write_into<B: TriangleBuf>(&mut self, buf: &mut B) {
         TriangleTile {
             vertexes: [
-                self.top_left + self.down,
                 self.top_left + self.down + self.right,
+                self.top_left + self.down,
                 self.top_left,
             ],
             get_height: &mut self.get_height,
@@ -104,8 +104,8 @@ where
 
         TriangleTile {
             vertexes: [
-                self.top_left + self.right,
                 self.top_left,
+                self.top_left + self.right,
                 self.top_left + self.down + self.right,
             ],
             get_height: &mut self.get_height,
@@ -138,13 +138,7 @@ where
         let triangle = self
             .vertexes
             .map(|point| Point3::new(point[0], (self.get_height)(&point), point[1]));
-        let normal = (triangle[0] - triangle[1]).cross(&(triangle[2] - triangle[1]));
-        let normal = Unit::new_normalize(normal);
-        let triangle = triangle.map(|point| Vertex {
-            point,
-            normal,
-            color,
-        });
+        let triangle = triangle.map(|point| Vertex { point, color });
         Triangle::from_array(triangle).write_into(buf);
     }
 }

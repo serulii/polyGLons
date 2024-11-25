@@ -1,17 +1,27 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Gets a raw mesh representing water in a scene. 
+ * Gets a raw mesh representing water in a scene.
  *
- * Has interleaved position (floatx3), normal (floatx3), and color (floatx3) attributes.
+ * Has interleaved position (floatx3), and color (floatx3) attributes.
  */
-export function get_water_mesh(): Uint8Array;
+export function water_buf(): Float32Array;
+export function water_buf_stride_floats(): number;
+export function water_buf_position_size(): number;
+export function water_buf_position_offset(): number;
+export function water_buf_color_size(): number;
+export function water_buf_color_offset(): number;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly get_water_mesh: () => [number, number];
+  readonly water_buf: () => [number, number];
+  readonly water_buf_stride_floats: () => number;
+  readonly water_buf_position_offset: () => number;
+  readonly water_buf_color_size: () => number;
+  readonly water_buf_color_offset: () => number;
+  readonly water_buf_position_size: () => number;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __wbindgen_start: () => void;

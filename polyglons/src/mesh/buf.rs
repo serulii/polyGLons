@@ -36,7 +36,6 @@ impl ExtendTriangleBuf for Triangle {
 
 pub struct Vertex {
     pub point: Point3<f32>,
-    pub normal: Unit<Vector3<f32>>,
     pub color: Color,
 }
 

@@ -18,21 +18,70 @@ function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
 
-function getArrayU8FromWasm0(ptr, len) {
+let cachedFloat32ArrayMemory0 = null;
+
+function getFloat32ArrayMemory0() {
+    if (cachedFloat32ArrayMemory0 === null || cachedFloat32ArrayMemory0.byteLength === 0) {
+        cachedFloat32ArrayMemory0 = new Float32Array(wasm.memory.buffer);
+    }
+    return cachedFloat32ArrayMemory0;
+}
+
+function getArrayF32FromWasm0(ptr, len) {
     ptr = ptr >>> 0;
-    return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
+    return getFloat32ArrayMemory0().subarray(ptr / 4, ptr / 4 + len);
 }
 /**
  * Gets a raw mesh representing water in a scene.
  *
- * Has interleaved position (floatx3), normal (floatx3), and color (floatx3) attributes.
- * @returns {Uint8Array}
+ * Has interleaved position (floatx3), and color (floatx3) attributes.
+ * @returns {Float32Array}
  */
-export function get_water_mesh() {
-    const ret = wasm.get_water_mesh();
-    var v1 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
-    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+export function water_buf() {
+    const ret = wasm.water_buf();
+    var v1 = getArrayF32FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
     return v1;
+}
+
+/**
+ * @returns {number}
+ */
+export function water_buf_stride_floats() {
+    const ret = wasm.water_buf_stride_floats();
+    return ret >>> 0;
+}
+
+/**
+ * @returns {number}
+ */
+export function water_buf_position_size() {
+    const ret = wasm.water_buf_color_size();
+    return ret >>> 0;
+}
+
+/**
+ * @returns {number}
+ */
+export function water_buf_position_offset() {
+    const ret = wasm.water_buf_position_offset();
+    return ret >>> 0;
+}
+
+/**
+ * @returns {number}
+ */
+export function water_buf_color_size() {
+    const ret = wasm.water_buf_color_size();
+    return ret >>> 0;
+}
+
+/**
+ * @returns {number}
+ */
+export function water_buf_color_offset() {
+    const ret = wasm.water_buf_color_offset();
+    return ret >>> 0;
 }
 
 async function __wbg_load(module, imports) {
@@ -93,6 +142,7 @@ function __wbg_init_memory(imports, memory) {
 function __wbg_finalize_init(instance, module) {
     wasm = instance.exports;
     __wbg_init.__wbindgen_wasm_module = module;
+    cachedFloat32ArrayMemory0 = null;
     cachedUint8ArrayMemory0 = null;
 
 

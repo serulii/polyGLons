@@ -13,17 +13,16 @@ impl VertexEntryBuf {
         self.buf.len()
     }
 
-    pub fn into_raw_data(self) -> Vec<u8> {
+    pub fn into_raw_data(self) -> Vec<f32> {
         cast_vec(self.buf)
     }
 }
 
 #[derive(Default, Debug, Copy, Clone, Pod, Zeroable)]
 #[repr(C)]
-struct VertexEntry {
-    position: [f32; 3],
-    normal: [f32; 3],
-    color: [f32; 3],
+pub struct VertexEntry {
+    pub position: [f32; 3],
+    pub color: [f32; 3],
 }
 
 pub struct ObjectBuf<'a> {
@@ -33,14 +32,11 @@ pub struct ObjectBuf<'a> {
 
 impl TriangleBuf for ObjectBuf<'_> {
     fn push_triangle(&mut self, triangle: &Triangle) {
-        self.buf.buf.extend(triangle.iter().map(|vertex| {
-            VertexEntry {
+        self.buf
+            .buf
+            .extend(triangle.iter().map(|vertex| VertexEntry {
                 position: self.transform.transform_point(&vertex.point).into(),
-                normal: Unit::new_normalize(self.transform.transform_vector(&vertex.normal))
-                    .into_inner()
-                    .into(),
                 color: vertex.color.into_rgb_array(),
-            }
-        }));
+            }));
     }
 }

@@ -3,8 +3,6 @@ use rand::{distributions::Standard, rngs::SmallRng, Rng, SeedableRng};
 use rustc_hash::FxHasher;
 use std::hash::{Hash, Hasher};
 
-pub struct Perlin3 {}
-
 fn point_rng<T: Hash + Scalar, const N: usize>(point: &Point<T, N>, why: &str) -> SmallRng {
     let mut hasher = FxHasher::default();
     point.hash(&mut hasher);
@@ -12,13 +10,11 @@ fn point_rng<T: Hash + Scalar, const N: usize>(point: &Point<T, N>, why: &str) -
     SmallRng::seed_from_u64(hasher.finish())
 }
 
-impl Perlin3 {
-    fn sample(from: &Point3<f32>, why: &str) {
-        let point = from.map(|x| x as u32);
-        let mut rng = point_rng(&point, why);
-        let axis = Vector3::<f32>::from_distribution(&Standard, &mut rng);
-        let axis = Unit::new_normalize(axis);
+pub fn get(point: &Point3<f32>, why: &str) -> f32 {
+    let point = point.map(|x| x as i32);
+    let mut rng = point_rng(&point, why);
+    //    let axis = Vector3::<f32>::from_distribution(&Standard, &mut rng);
+    //    let axis = Unit::new_normalize(axis);
 
-        //        let grid =
-    }
+    rng.gen()
 }

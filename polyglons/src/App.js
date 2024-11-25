@@ -12,8 +12,10 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import Terrain from "./components/perlinTerrain";
 import Skybox from "./components/skybox";
+import init from "./polyglons-wasm/polyglons_wasm"
 
 import * as dat from "dat.gui";
+import Water from "./components/Water";
 
 // https://sbcode.net/react-three-fiber/gltfloader/
 // https://threejs.org/docs/#api/en/objects/Mesh
@@ -21,13 +23,15 @@ import * as dat from "dat.gui";
 // https://threejs.org/docs/#api/en/loaders/ObjectLoader
 // https://threejs.org/docs/#examples/en/loaders/OBJLoader
 // https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
+  // const texture = useLoader(THREE.TextureLoader, "./daniel_ritchie_face.jpg");
+  // https://sbcode.net/react-three-fiber/use-loader/
 
 // first person camera https://www.youtube.com/watch?v=oqKzxPMLWxo
 // third person camera https://www.youtube.com/watch?v=UuNPHOJ_V5o
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
-function App() {
 
+function Scene() {
   const [params, setParams] = useState({
     scale: 10,
     octaves: 8,
@@ -51,42 +55,13 @@ function App() {
 
   const gltf = useLoader(GLTFLoader, "./models/i_love_graphics.glb");
 
-  // https://threejs.org/docs/#api/en/core/BufferGeometry
-  const vertices = new Float32Array([
-    -1.0,
-    -1.0,
-    1.0, // v0
-    1.0,
-    -1.0,
-    1.0, // v1
-    1.0,
-    1.0,
-    1.0, // v2
-    -1.0,
-    1.0,
-    1.0, // v3
-  ]);
-
-  const indices = [0, 1, 2, 2, 3, 0];
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setIndex(indices);
-  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
-  const material = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    side: THREE.DoubleSide,
-  });
-  // const texture = useLoader(THREE.TextureLoader, "./daniel_ritchie_face.jpg");
-  // https://sbcode.net/react-three-fiber/use-loader/
-
   return (
     <Canvas>
       <ambientLight intensity={0} />
       <pointLight position={[0, 15, 0]} intensity="300" />
       <Terrain params={params}/>
+      <Water />
       <Skybox/>
-
-      {/* <mesh geometry={geometry} material={material} /> */}
 
       <primitive
         object={gltf.scene}
@@ -102,4 +77,14 @@ function App() {
   );
 }
 
-export default App;
+export default function() {
+  const [wasmLoaded, setWasmLoaded] = useState(false);
+  useEffect(() => {
+    const loadWasm = async () => {
+      await init();
+      setWasmLoaded(true);
+    };
+    loadWasm();
+  });
+  return wasmLoaded ? <Scene /> : <div>Wasm loading...</div>;
+}
