@@ -17,6 +17,8 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { createTerrain } from './components/perlinTerrain.js';
 import { createSkybox } from "./components/skybox.js";
 
+import { get_number } from "polyglons-wasm"
+
 // https://sbcode.net/react-three-fiber/gltfloader/
 
 function Terrain() {
@@ -110,7 +112,10 @@ function Sphere() {
       <meshBasicMaterial map={texture} />
     </mesh>
   );
-} // https://threejs.org/docs/#api/en/objects/Mesh
+} 
+
+
+// https://threejs.org/docs/#api/en/objects/Mesh
 // https://threejs.org/docs/#api/en/core/BufferGeometry
 // https://threejs.org/docs/#api/en/loaders/ObjectLoader
 // https://threejs.org/docs/#examples/en/loaders/OBJLoader
@@ -126,33 +131,11 @@ function App() {
   const gltf = useLoader(GLTFLoader, "./models/i_love_graphics.glb");
 
   // https://threejs.org/docs/#api/en/core/BufferGeometry
-  const vertices = new Float32Array([
-    -1.0,
-    -1.0,
-    1.0, // v0
-    1.0,
-    -1.0,
-    1.0, // v1
-    1.0,
-    1.0,
-    1.0, // v2
-    -1.0,
-    1.0,
-    1.0, // v3
-  ]);
 
-  const indices = [0, 1, 2, 2, 3, 0];
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setIndex(indices);
-  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
-  const material = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    side: THREE.DoubleSide,
-  });
   // const texture = useLoader(THREE.TextureLoader, "./daniel_ritchie_face.jpg");
   // https://sbcode.net/react-three-fiber/use-loader/
 
+  console.log(get_number())
   return (
     <Canvas>
       <ambientLight intensity={0} />
@@ -160,8 +143,6 @@ function App() {
       {/* <CoolTube /> */}
       <Terrain/>
       <Skybox/>
-
-      {/* <mesh geometry={geometry} material={material} /> */}
 
       <primitive
         object={gltf.scene}
