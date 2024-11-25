@@ -1,16 +1,19 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * This gets a nice number.
+ * Gets a raw mesh representing water in a scene. 
+ *
+ * Has interleaved position (floatx3), normal (floatx3), and color (floatx3) attributes.
  */
-export function get_number(): number;
+export function get_water_mesh(): Uint8Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly get_number: () => number;
+  readonly get_water_mesh: () => [number, number];
   readonly __wbindgen_export_0: WebAssembly.Table;
+  readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __wbindgen_start: () => void;
 }
 

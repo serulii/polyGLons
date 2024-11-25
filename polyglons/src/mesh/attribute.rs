@@ -1,7 +1,7 @@
-use bytemuck::{allocation::cast_vec, NoUninit, Pod, Zeroable};
-use nalgebra::{Unit, Matrix4};
+use bytemuck::{allocation::cast_vec, Pod, Zeroable};
+use nalgebra::{Matrix4, Unit};
 
-use crate::mesh::buf::{TriangleBuf, Triangle};
+use crate::mesh::buf::{Triangle, TriangleBuf};
 
 #[derive(Default, Debug, Clone)]
 pub struct VertexEntryBuf {
@@ -36,14 +36,11 @@ impl TriangleBuf for ObjectBuf<'_> {
         self.buf.buf.extend(triangle.iter().map(|vertex| {
             VertexEntry {
                 position: self.transform.transform_point(&vertex.point).into(),
-                normal: Unit::new_normalize(self
-                    .transform
-                    .transform_vector(&vertex.normal))
+                normal: Unit::new_normalize(self.transform.transform_vector(&vertex.normal))
                     .into_inner()
                     .into(),
-                color: vertex.color.rgb,
+                color: vertex.color.into_rgb_array(),
             }
         }));
     }
 }
-

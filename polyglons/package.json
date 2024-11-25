@@ -21,7 +21,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build-wasm": "rm -rf src/polyglons-wasm && wasm-pack build --dev --target web --out-dir src/polyglons-wasm && rm src/polyglons-wasm/.gitignore",
+    "build-wasm": "rm -rf src/polyglons-wasm && wasm-pack build --release --target web --out-dir src/polyglons-wasm && rm src/polyglons-wasm/.gitignore",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
