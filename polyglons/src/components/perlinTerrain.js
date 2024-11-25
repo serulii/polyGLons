@@ -76,7 +76,7 @@ export default function Terrain({ params }) {
       }
       const newTerrain = createTerrain(params);
       currentTerrain.add(newTerrain);
-    }, [params]); // Re-run this effect when `params` change
+    }, [params]);
   
     return <mesh ref={terrainRef} />;
   }

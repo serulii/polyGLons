@@ -1,53 +1,21 @@
-// import logo from "./logo.svg";
 import "./css/App.css";
 import React from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import {
-  OrbitControls,
   FlyControls,
-  FirstPersonControls,
-  DragControls,
   PointerLockControls,
 } from "@react-three/drei";
 import * as THREE from "three";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import Terrain from "./components/perlinTerrain";  // Import Terrain component
-import Skybox from "./components/skybox";  // Import Skybox component
+import Terrain from "./components/perlinTerrain";
+import Skybox from "./components/skybox";
 
 import * as dat from "dat.gui";
 
 // https://sbcode.net/react-three-fiber/gltfloader/
-
-// function Terrain({ params }) {
-//   const terrainRef = useRef();
-//   useEffect(() => {
-//     if (!params) return;
-
-//     if (terrainRef.current) {
-//       terrainRef.current.geometry.dispose();
-//       terrainRef.current.material.dispose();
-//     }
-//     const terrain = createTerrain(params);
-//     terrainRef.current.add(terrain);
-//   }, [params]);
-
-//   return <mesh ref={terrainRef} />;
-// }
-
-// function Skybox() {
-//   const skyboxRef = useRef();
-//   React.useEffect(() => {
-//     const skybox = createSkybox();
-//     skyboxRef.current.add(skybox);
-//   }, []);
-
-//   return <mesh ref={skyboxRef} />
-// }
-
-
 // https://threejs.org/docs/#api/en/objects/Mesh
 // https://threejs.org/docs/#api/en/core/BufferGeometry
 // https://threejs.org/docs/#api/en/loaders/ObjectLoader
@@ -56,9 +24,7 @@ import * as dat from "dat.gui";
 
 // first person camera https://www.youtube.com/watch?v=oqKzxPMLWxo
 // third person camera https://www.youtube.com/watch?v=UuNPHOJ_V5o
-
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
-
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 function App() {
 
@@ -71,10 +37,8 @@ function App() {
     height: 5.5,
   });
 
-  // Setup dat.GUI controls to update params state
   useEffect(() => {
     const gui = new dat.GUI();
-    // Add sliders for terrain parameters
     gui.add(params, "scale", 0, 10).name("Scale").onChange((value) => setParams((prev) => ({ ...prev, scale: value })));
     gui.add(params, "octaves", 1, 8, 1).name("Octaves").onChange((value) => setParams((prev) => ({ ...prev, octaves: value })));
     gui.add(params, "lacunarity", 1, 3).step(0.1).name("Lacunarity").onChange((value) => setParams((prev) => ({ ...prev, lacunarity: value })));
@@ -82,10 +46,9 @@ function App() {
     gui.add(params, "exponentiation", 0.1, 5).step(0.1).name("Exponentiation").onChange((value) => setParams((prev) => ({ ...prev, exponentiation: value })));
     gui.add(params, "height", 0, 100).name("Height").onChange((value) => setParams((prev) => ({ ...prev, height: value })));
 
-    return () => gui.destroy(); // Cleanup the GUI on unmount
+    return () => gui.destroy();
   }, [params]);
 
-  // Create terrain component
   const gltf = useLoader(GLTFLoader, "./models/i_love_graphics.glb");
 
   // https://threejs.org/docs/#api/en/core/BufferGeometry
@@ -120,7 +83,6 @@ function App() {
     <Canvas>
       <ambientLight intensity={0} />
       <pointLight position={[0, 15, 0]} intensity="300" />
-      {/* <CoolTube /> */}
       <Terrain params={params}/>
       <Skybox/>
 
@@ -131,8 +93,6 @@ function App() {
         position={[0, 1, 0]}
         children-0-castShadow
       />
-      {/* <GlowingSphere />
-      <Sphere /> */}
       <EffectComposer>
         <Bloom intensity={0} luminanceThreshold={0} luminanceSmoothing={0.9} />
       </EffectComposer>
