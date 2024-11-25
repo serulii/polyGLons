@@ -1,6 +1,7 @@
 import * as THREE from 'three';
+import { useRef, useEffect } from "react";
 
-export function createSkybox() {
+function createSkybox() {
 
     let materialArray = [];
 
@@ -23,3 +24,14 @@ export function createSkybox() {
 
     return skybox;
 }
+
+export default function Skybox() {
+    const skyboxRef = useRef();
+  
+    useEffect(() => {
+      const skybox = createSkybox();
+      skyboxRef.current.add(skybox);
+    }, []);
+  
+    return <mesh ref={skyboxRef} />;
+  }
