@@ -12,7 +12,6 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import Terrain from "./components/perlinTerrain";
 import Skybox from "./components/skybox";
-
 import * as dat from "dat.gui";
 
 // https://sbcode.net/react-three-fiber/gltfloader/
@@ -39,10 +38,10 @@ function App() {
 
   useEffect(() => {
     const gui = new dat.GUI();
-    gui.add(params, "scale", 0, 10).name("Scale").onChange((value) => setParams((prev) => ({ ...prev, scale: value })));
+    gui.add(params, "scale", 0, 30).name("Scale").onChange((value) => setParams((prev) => ({ ...prev, scale: value })));
     gui.add(params, "octaves", 1, 8, 1).name("Octaves").onChange((value) => setParams((prev) => ({ ...prev, octaves: value })));
     gui.add(params, "lacunarity", 1, 3).step(0.1).name("Lacunarity").onChange((value) => setParams((prev) => ({ ...prev, lacunarity: value })));
-    gui.add(params, "persistence", 0, 1).step(0.01).name("Persistence").onChange((value) => setParams((prev) => ({ ...prev, persistence: value })));
+    gui.add(params, "persistence", 0, 2).step(0.01).name("Persistence").onChange((value) => setParams((prev) => ({ ...prev, persistence: value })));
     gui.add(params, "exponentiation", 0.1, 5).step(0.1).name("Exponentiation").onChange((value) => setParams((prev) => ({ ...prev, exponentiation: value })));
     gui.add(params, "height", 0, 100).name("Height").onChange((value) => setParams((prev) => ({ ...prev, height: value })));
 
