@@ -4,7 +4,6 @@ import { useRef, useEffect } from 'react';
 import { BIOME_COLORS } from '../utils/constants';
 
 function getColor(height, colors) {
-    console.log(colors);
     for (let i = 0; i < colors.length; i++) {
         const { height: thresholdHeight, color } = colors[i];
 
