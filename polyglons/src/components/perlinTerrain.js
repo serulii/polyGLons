@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import { createNoise2D } from 'simplex-noise';
-import { useRef, useEffect } from "react";
+import { useRef, useEffect } from 'react';
 import { BIOME_COLORS } from '../utils/constants';
 
 function getColor(height, colors) {
     console.log(colors);
     for (let i = 0; i < colors.length; i++) {
         const { height: thresholdHeight, color } = colors[i];
-        
+
         if (height <= thresholdHeight) {
             return color;
         }
@@ -16,7 +16,7 @@ function getColor(height, colors) {
 }
 
 function createTerrain(params) {
-    var geometry = new THREE.PlaneGeometry(50, 50, 100, 100);
+    var geometry = new THREE.PlaneGeometry(100, 100, 100, 100);
     var nonIndexedGeometry = geometry.toNonIndexed();
 
     const material = new THREE.MeshLambertMaterial({
@@ -32,7 +32,7 @@ function createTerrain(params) {
 
     const colors = [];
 
-    const G = 2.0 ** (-params.persistence);
+    const G = 2.0 ** -params.persistence;
     for (let i = 0; i < positions.length; i += 9) {
         for (let j = i; j < i + 9; j += 3) {
             const x = positions[j];
@@ -44,7 +44,7 @@ function createTerrain(params) {
             const distortNoise = noise2D(x * distortScale, y * distortScale);
             const distortedRadius = radius + distortNoise * distortStrength;
             const distFromCenter = Math.sqrt(x * x + y * y) / distortedRadius;
-            
+
             // cubic taper for smoother transition :)
             let taper = 1 - Math.pow(distFromCenter, 3);
             taper = Math.max(0, Math.min(1, taper));
@@ -57,7 +57,8 @@ function createTerrain(params) {
             for (let o = 0; o < params.octaves; o++) {
                 const xs = x / params.scale;
                 const ys = y / params.scale;
-                const noiseVal = noise2D(xs * frequency, ys * frequency) * 0.5 + 0.5;
+                const noiseVal =
+                    noise2D(xs * frequency, ys * frequency) * 0.5 + 0.5;
                 total += noiseVal * amplitude;
                 normalization += amplitude;
                 amplitude *= G;
@@ -78,12 +79,15 @@ function createTerrain(params) {
             }
             positions[j + 2] = final;
 
-            const color = getColor(final, BIOME_COLORS["FOREST"]);
+            const color = getColor(final, BIOME_COLORS['FOREST']);
             colors.push(...color.toArray());
         }
     }
 
-    nonIndexedGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    nonIndexedGeometry.setAttribute(
+        'color',
+        new THREE.Float32BufferAttribute(colors, 3)
+    );
     nonIndexedGeometry.attributes.position.needsUpdate = true;
 
     return terrain;
@@ -91,17 +95,17 @@ function createTerrain(params) {
 
 export default function Terrain({ params }) {
     const terrainRef = useRef();
-  
+
     useEffect(() => {
         const currentTerrain = terrainRef.current;
-  
-      if (currentTerrain.children.length > 0) {
-        const oldTerrain = currentTerrain.children[0];
-        currentTerrain.remove(oldTerrain);
-      }
-      const newTerrain = createTerrain(params);
-      currentTerrain.add(newTerrain);
+
+        if (currentTerrain.children.length > 0) {
+            const oldTerrain = currentTerrain.children[0];
+            currentTerrain.remove(oldTerrain);
+        }
+        const newTerrain = createTerrain(params);
+        currentTerrain.add(newTerrain);
     }, [params]);
-  
+
     return <mesh ref={terrainRef} />;
-  }
+}
