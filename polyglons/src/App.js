@@ -3,8 +3,9 @@ import React from "react";
 import { Canvas } from "@react-three/fiber";
 import {
   FlyControls,
-  PointerLockControls,
+  FirstPersonControls
 } from "@react-three/drei";
+
 import * as THREE from "three";
 import { useEffect, useState } from "react";
 import { useLoader } from "@react-three/fiber";
@@ -13,6 +14,7 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import Terrain from "./components/perlinTerrain";
 import Skybox from "./components/skybox";
 import init from "./polyglons-wasm/polyglons_wasm"
+// import PointerLockControls from "./components/pointerLockControls2";
 
 import * as dat from "dat.gui";
 import Water from "./components/Water";
@@ -31,7 +33,10 @@ import Water from "./components/Water";
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
+
 function Scene() {
+  const [gameView, setGameView] = useState(false);
+
   const [params, setParams] = useState({
     scale: 10,
     octaves: 8,
@@ -55,28 +60,59 @@ function Scene() {
 
   const gltf = useLoader(GLTFLoader, "./models/i_love_graphics.glb");
 
-  return (
-    <Canvas>
-      <ambientLight intensity={0} />
-      <pointLight position={[0, 15, 0]} intensity="300" />
-      <Terrain params={params}/>
-      <Water />
-      <Skybox/>
+  if (gameView == false){
+    return (
+      <>
+      <Canvas>
+        <ambientLight intensity={0} />
+        <pointLight position={[0, 15, 0]} intensity="300" />
+        <Terrain params={params}/>
+        <Water />
+        <Skybox/>
+  
+        <primitive
+          object={gltf.scene}
+          position={[0, 1, 0]}
+          children-0-castShadow
+        />
+        <EffectComposer>
+          <Bloom intensity={0} luminanceThreshold={0} luminanceSmoothing={0.9} />
+        </EffectComposer>
+        <FirstPersonControls lookSpeed={0.2}/>
+        <FlyControls autoForward={false} movementSpeed={2} />
+      </Canvas>
 
-      <primitive
-        object={gltf.scene}
-        position={[0, 1, 0]}
-        children-0-castShadow
-      />
-      <EffectComposer>
-        <Bloom intensity={0} luminanceThreshold={0} luminanceSmoothing={0.9} />
-      </EffectComposer>
-      <PointerLockControls dragToLook={true} lookSpeed={0.05} />
-      <FlyControls autoForward={false} movementSpeed={2} />
-    </Canvas>
-  );
+      <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
+      </>
+    );
+  }
+  
+  else if(gameView == true){
+    return (
+      <>
+      <Canvas>
+        <ambientLight intensity={0} />
+        <pointLight position={[0, 15, 0]} intensity="300" />
+        <Terrain params={params}/>
+        <Water />
+        <Skybox/>
+  
+        <primitive
+          object={gltf.scene}
+          position={[0, 1, 0]}
+          children-0-castShadow
+        />
+        <EffectComposer>
+          <Bloom intensity={0} luminanceThreshold={0} luminanceSmoothing={0.9} />
+        </EffectComposer>
+        <FirstPersonControls lookSpeed={0.2}/>
+        <FlyControls autoForward={false} movementSpeed={2} />
+      </Canvas>
+      <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
+      </>
+    );
+  } 
 }
-
 export default function() {
   const [wasmLoaded, setWasmLoaded] = useState(false);
   useEffect(() => {

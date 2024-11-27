@@ -11,6 +11,7 @@ function createTerrain(params) {
         wireframe: false,
         flatShading: true,
     });
+    
     const terrain = new THREE.Mesh(nonIndexedGeometry, material);
     terrain.rotation.x = -Math.PI / 2;
 
