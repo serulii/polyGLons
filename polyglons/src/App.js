@@ -10,6 +10,8 @@ import Terrain from './components/perlinTerrain';
 import { generateObjects } from './components/objectGen';
 import Skybox from './components/skybox';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import initWasm from './polyglons-wasm/polyglons_wasm';
+import Water from './components/Water';
 
 import * as dat from 'dat.gui';
 
@@ -19,12 +21,14 @@ import * as dat from 'dat.gui';
 // https://threejs.org/docs/#api/en/loaders/ObjectLoader
 // https://threejs.org/docs/#examples/en/loaders/OBJLoader
 // https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
+// const texture = useLoader(THREE.TextureLoader, "./daniel_ritchie_face.jpg");
+// https://sbcode.net/react-three-fiber/use-loader/
 
 // first person camera https://www.youtube.com/watch?v=oqKzxPMLWxo
 // third person camera https://www.youtube.com/watch?v=UuNPHOJ_V5o
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
-function App() {
+function Scene() {
     const [params, setParams] = useState({
         scale: 10,
         octaves: 8,
@@ -102,17 +106,16 @@ function App() {
     return (
         <Canvas>
             <ambientLight intensity={0} />
-            <pointLight position={[0, 15, 0]} intensity="300" />
+            <directionalLight intensity={0.8} />
             <Terrain params={params} />
             <Skybox />
+            {/* <Water /> */}
 
-            {/* <mesh geometry={geometry} material={material} /> */}
-
-            <primitive
+            {/* <primitive
                 object={scene}
                 position={[0, 1, 0]}
                 children-0-castShadow
-            />
+            /> */}
             <EffectComposer>
                 <Bloom
                     intensity={0}
@@ -126,4 +129,14 @@ function App() {
     );
 }
 
-export default App;
+export default function () {
+    const [wasmLoaded, setWasmLoaded] = useState(false);
+    useEffect(() => {
+        const loadWasm = async () => {
+            await initWasm();
+            setWasmLoaded(true);
+        };
+        loadWasm();
+    });
+    return wasmLoaded ? <Scene /> : <div>Wasm loading...</div>;
+}
