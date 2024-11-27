@@ -3,7 +3,7 @@ import { createNoise2D } from 'simplex-noise';
 import { useRef, useEffect } from "react";
 
 function createTerrain(params) {
-    var geometry = new THREE.PlaneGeometry(100, 100, 100, 100);
+    var geometry = new THREE.PlaneGeometry(50, 50, 100, 100);
     var nonIndexedGeometry = geometry.toNonIndexed();
 
     const material = new THREE.MeshLambertMaterial({
@@ -19,12 +19,22 @@ function createTerrain(params) {
 
     const colors = [];
 
-
     const G = 2.0 ** (-params.persistence);
     for (let i = 0; i < positions.length; i += 9) {
         for (let j = i; j < i + 9; j += 3) {
             const x = positions[j];
             const y = positions[j + 1];
+
+            const radius = 20; // make this adjustable later!
+            const distortScale = 0.1;
+            const distortStrength = 3;
+            const distortNoise = noise2D(x * distortScale, y * distortScale);
+            const distortedRadius = radius + distortNoise * distortStrength;
+            const distFromCenter = Math.sqrt(x * x + y * y) / distortedRadius;
+            
+            // cubic taper for smoother transition :)
+            let taper = 1 - Math.pow(distFromCenter, 3);
+            taper = Math.max(0, Math.min(1, taper));
 
             let amplitude = 1.0;
             let frequency = 1.0;
@@ -41,14 +51,25 @@ function createTerrain(params) {
                 frequency *= params.lacunarity;
             }
             total /= normalization;
-            const final = Math.pow(total, params.exponentiation) * params.height;
+
+            const baseHeight = 1;
+            let final = Math.pow(total, params.exponentiation) * params.height;
+
+            // apply taper if it's towards the edge
+            if (distFromCenter > 0.75) {
+                final = THREE.MathUtils.lerp(0, final, taper);
+            }
+            // add a base height for the island
+            if (final > 0) {
+                final += baseHeight;
+            }
             positions[j + 2] = final;
 
             let color;
-            if (positions[i + 2] > 1.4) {
+            if (positions[i + 2] > 2.4) {
                 color = new THREE.Color(1.0, 1.0, 1.0);
             } 
-            else if(positions[i + 2] > 0.7){
+            else if(positions[i + 2] > 1.7){
                 color = new THREE.Color(0.6, 0.6, 0.6);
             }
             else {
@@ -80,3 +101,4 @@ export default function Terrain({ params }) {
   
     return <mesh ref={terrainRef} />;
   }
+  
