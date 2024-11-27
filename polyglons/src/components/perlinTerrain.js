@@ -1,6 +1,19 @@
 import * as THREE from 'three';
 import { createNoise2D } from 'simplex-noise';
 import { useRef, useEffect } from "react";
+import { BIOME_COLORS } from '../utils/constants';
+
+function getColor(height, colors) {
+    console.log(colors);
+    for (let i = 0; i < colors.length; i++) {
+        const { height: thresholdHeight, color } = colors[i];
+        
+        if (height <= thresholdHeight) {
+            return color;
+        }
+    }
+    return colors[colors.length - 1].color;
+}
 
 function createTerrain(params) {
     var geometry = new THREE.PlaneGeometry(50, 50, 100, 100);
@@ -65,16 +78,7 @@ function createTerrain(params) {
             }
             positions[j + 2] = final;
 
-            let color;
-            if (positions[i + 2] > 2.4) {
-                color = new THREE.Color(1.0, 1.0, 1.0);
-            } 
-            else if(positions[i + 2] > 1.7){
-                color = new THREE.Color(0.6, 0.6, 0.6);
-            }
-            else {
-                color = new THREE.Color(0.486, 0.988, 0);
-            }
+            const color = getColor(final, BIOME_COLORS["FOREST"]);
             colors.push(...color.toArray());
         }
     }
@@ -101,4 +105,3 @@ export default function Terrain({ params }) {
   
     return <mesh ref={terrainRef} />;
   }
-  
