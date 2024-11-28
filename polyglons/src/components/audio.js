@@ -5,6 +5,7 @@ const AudioPlayer = () => {
   const audioRef = useRef();
 
   useEffect(() => {
+
     //prevents rerendering from restarting the audio
     if (audioRef.current) return;
 
