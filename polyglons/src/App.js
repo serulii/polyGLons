@@ -13,6 +13,7 @@ import Skybox from './components/skybox';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import Water from './components/Water';
+import AudioPlayer from './components/audio';
 
 import * as dat from 'dat.gui';
 
@@ -112,51 +113,27 @@ function Scene() {
     generateObjects(scene);
     // https://sbcode.net/react-three-fiber/use-loader/
 
-    if(gameView == false){
-      return (
-        <>
-        <Canvas>
-            <ambientLight intensity={0} />
-            <directionalLight intensity={0.8} />
-            <Terrain params={params} />
-            <Skybox />
-            <Water />
-
-            {/* <primitive
-                object={scene}
-                position={[0, 1, 0]}
-                children-0-castShadow
-            /> */}
-            <EffectComposer>
-                <Bloom
-                    intensity={0}
-                    luminanceThreshold={0}
-                    luminanceSmoothing={0.9}
-                />
-            </EffectComposer>
-            <FirstPersonControls lookSpeed={0.2} />
-            <FlyControls autoForward={false} movementSpeed={2} />
-        </Canvas>
-        <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
-        </>
-    );
-  } 
-  else if (gameView == true){
     return (
       <>
       <Canvas>
-      <OrthographicCamera
-          left={-50}
-          right={50}
-          top={50}
-          bottom={-50}
-          near={0}
-          far={100}
-          position={[0, 20, 40]}
-          zoom={0.3}
-          makeDefault
-          onUpdate={(self) => self.lookAt(0, 0, 0)}
-        />
+      <AudioPlayer/>
+      {gameView && (
+          <OrthographicCamera
+            left={-50}
+            right={50}
+            top={50}
+            bottom={-50}
+            near={0}
+            far={100}
+            position={[0, 20, 40]}
+            zoom={0.3}
+            makeDefault
+            onUpdate={(self) => self.lookAt(0, 0, 0)}
+          />
+        )}
+        {!gameView && (
+          <Skybox/>
+        )}
           <ambientLight intensity={0} />
           <directionalLight intensity={0.8} />
           <Terrain params={params} />
@@ -181,7 +158,6 @@ function Scene() {
       </>
     );
   } 
-}
 
 export default function () {
     const [wasmLoaded, setWasmLoaded] = useState(false);
