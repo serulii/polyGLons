@@ -7,15 +7,14 @@ import * as THREE from 'three';
 import { useEffect, useState } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import Terrain from './components/perlinTerrain';
 import { generateObjects } from './components/objectGen';
 import Skybox from './components/skybox';
-import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import Water from './components/Water';
 import AudioPlayer from './components/audio';
 
 import * as dat from 'dat.gui';
+import Terrain from './components/Terrain';
 
 // https://sbcode.net/react-three-fiber/gltfloader/
 // https://threejs.org/docs/#api/en/objects/Mesh
@@ -151,13 +150,13 @@ function Scene() {
                   luminanceSmoothing={0.9}
               />
           </EffectComposer>
-          <FirstPersonControls lookSpeed={0.2} />
+          <FirstPersonControls lookSpeed={0.05} />
           <FlyControls autoForward={false} movementSpeed={2} />
       </Canvas>
       <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
       </>
     );
-  } 
+}
 
 export default function () {
     const [wasmLoaded, setWasmLoaded] = useState(false);

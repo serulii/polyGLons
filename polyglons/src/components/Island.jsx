@@ -14,8 +14,9 @@ function getColor(height, colors) {
     return colors[colors.length - 1].color;
 }
 
-function createTerrain(params) {
-    var geometry = new THREE.PlaneGeometry(100, 100, 100, 100);
+function createTerrain(params, center) {
+    console.log("Creating terrain at:", center);
+    var geometry = new THREE.PlaneGeometry(100, 100, 50, 50);
     var nonIndexedGeometry = geometry.toNonIndexed();
 
     const material = new THREE.MeshLambertMaterial({
@@ -35,8 +36,8 @@ function createTerrain(params) {
     const G = 2.0 ** -params.persistence;
     for (let i = 0; i < positions.length; i += 9) {
         for (let j = i; j < i + 9; j += 3) {
-            const x = positions[j];
-            const y = positions[j + 1];
+            const x = positions[j] + center.x;
+            const y = positions[j + 1] + center.y;
 
             const distortScale = 0.1;
             const distortStrength = 3;
@@ -78,7 +79,7 @@ function createTerrain(params) {
             }
             positions[j + 2] = final;
             let alpha = 1;
-            const color = getColor( positions[i + 2], BIOME_COLORS['FOREST']);
+            const color = getColor(positions[i + 2], BIOME_COLORS['FOREST']);
             if(color.equals(new THREE.Color(0.2, 0.5, 0.7))){
                 alpha = 0;
             }
@@ -96,7 +97,7 @@ function createTerrain(params) {
     return terrain;
 }
 
-export default function Terrain({ params }) {
+export default function Island({ params, center }) {
     const terrainRef = useRef();
 
     useEffect(() => {
@@ -106,7 +107,7 @@ export default function Terrain({ params }) {
             const oldTerrain = currentTerrain.children[0];
             currentTerrain.remove(oldTerrain);
         }
-        const newTerrain = createTerrain(params);
+        const newTerrain = createTerrain(params, center);
         currentTerrain.add(newTerrain);
     }, [params]);
 
