@@ -59,7 +59,7 @@ export default function Terrain({ params }) {
     const [islands, setIslands] = useState([]);
 
     useEffect(() => {
-        const newIslands = generateIslands(5, bounds, 10, 12); // 5 islands, radius 10-15
+        const newIslands = generateIslands(5, bounds, 10, 12); // 5 islands, radius 10-12
         setIslands(newIslands);
     }, []);
 
