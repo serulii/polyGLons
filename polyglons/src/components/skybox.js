@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { useRef, useEffect } from 'react';
+import { SCENE_DIMENSION } from '../utils/constants';
 
 function createSkybox() {
     let materialArray = [];
@@ -30,7 +31,7 @@ function createSkybox() {
         new THREE.MeshBasicMaterial({ map: texture_bk, side: THREE.BackSide })
     );
 
-    let skyboxGeometry = new THREE.BoxGeometry(100, 100, 100);
+    let skyboxGeometry = new THREE.BoxGeometry(SCENE_DIMENSION, SCENE_DIMENSION, SCENE_DIMENSION);
     let skybox = new THREE.Mesh(skyboxGeometry, materialArray);
 
     return skybox;
