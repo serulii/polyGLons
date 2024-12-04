@@ -5,7 +5,7 @@ import { SCENE_DIMENSION } from "../utils/constants";
 
 function generateIslands(numIslands, bounds, minRadius, maxRadius) {
     const islands = [];
-    const cellSize = maxRadius * 3;
+    const cellSize = maxRadius * 2.5;
     const gridCols = Math.floor((bounds.xMax - bounds.xMin) / cellSize);
     const gridRows = Math.floor((bounds.yMax - bounds.yMin) / cellSize);
     numIslands = Math.min(gridCols * gridRows, numIslands); // otherwise can't fit all islands
@@ -59,7 +59,7 @@ export default function Terrain({ params }) {
     const [islands, setIslands] = useState([]);
 
     useEffect(() => {
-        const newIslands = generateIslands(5, bounds, 10, 15); // 5 islands, radius 10-15
+        const newIslands = generateIslands(5, bounds, 10, 12); // 5 islands, radius 10-15
         setIslands(newIslands);
     }, []);
 
