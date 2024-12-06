@@ -150,7 +150,12 @@ function Scene() {
           <Skybox/>
         )}
           <ambientLight intensity={0} />
-          <directionalLight intensity={0.8} />
+          <directionalLight intensity={1} />
+          <hemisphereLight
+            intensity={1}
+            groundColor={'ffd466'}
+            skyColor={'170fff'}>
+          </hemisphereLight>
           <Terrain params={params} />
           <Water />
 
