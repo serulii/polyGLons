@@ -33,6 +33,11 @@
   top: 10%;
   left: 10%;
 }
+.button1 {
+    position: fixed;
+    top: 15%;
+    left: 10%;
+  }
 
 @keyframes App-logo-spin {
     from {

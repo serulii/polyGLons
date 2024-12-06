@@ -1,6 +1,6 @@
 import './css/App.css';
 import React from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { FlyControls, PointerLockControls, FirstPersonControls } from '@react-three/drei';
 import { OrthographicCamera } from '@react-three/drei';
 import * as THREE from 'three';
@@ -12,6 +12,11 @@ import Skybox from './components/skybox';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import Water from './components/Water';
 import AudioPlayer from './components/audio';
+import changeSong from './components/audio';
+
+// import CustomCamera from './components/CustomCamera'
+
+// import { FirstPersonCamera } from './components/CustomCamera';
 
 import * as dat from 'dat.gui';
 import Terrain from './components/Terrain';
@@ -29,6 +34,31 @@ import Terrain from './components/Terrain';
 // third person camera https://www.youtube.com/watch?v=UuNPHOJ_V5o
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
+
+function Rig(left, right, top, bottom, near, far) {
+    const { camera } = useThree();
+    camera.updateProjectionMatrix();
+    // console.log(camera.projectionMatrix);
+    let orthoMatrix = camera.projectionMatrix.makeOrthographic(left, right, top, bottom, near, far);
+    console.log(orthoMatrix);
+    camera.left = left;
+    camera.right = right;
+    camera.top = top;
+    camera.bottom = bottom;
+    camera.near = near;
+    camera.far = far;
+
+    camera.updateProjectionMatrix();
+    console.log(camera.projectionMatrix);
+
+
+    // camera.position.set(0, 20, 40);
+    // camera.zoom = 0.3;
+    camera.makeDefault;
+    camera.onUpdate = (self) => self.lookAt(0, 0, 0);
+    return <></>
+}
+
 function Scene() {
     const [gameView, setGameView] = useState(false);
     const [params, setParams] = useState({
@@ -41,6 +71,8 @@ function Scene() {
         radius: 20,
     });
     const scene = new THREE.Scene();
+
+    
 
     useEffect(() => {
         const gui = new dat.GUI();
@@ -114,8 +146,16 @@ function Scene() {
 
     return (
       <>
+        <AudioPlayer/>
       <Canvas>
-      <AudioPlayer/>
+      {/* <Rig  
+        left={-50}
+        right={50}
+        top={50}
+        bottom={-50}
+        near={0}
+        far={100}
+        /> */}
       {gameView && (
           <OrthographicCamera
             left={-50}
@@ -151,9 +191,11 @@ function Scene() {
               />
           </EffectComposer>
           <FirstPersonControls lookSpeed={0.05} />
+          {/* <FirstPersonCamera/> */}
           <FlyControls autoForward={false} movementSpeed={2} />
       </Canvas>
       <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
+      {/* <button className="button1" onClick={() => changeSong()}>Change Song</button> */}
       </>
     );
 }
