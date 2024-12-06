@@ -56,7 +56,6 @@ function generateIslands(numIslands, bounds, minRadius, maxRadius) {
         islands.push(newIsland);
     }
 
-    console.log(islands);
     return islands;
 }
 
