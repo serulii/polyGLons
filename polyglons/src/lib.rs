@@ -16,10 +16,19 @@ use crate::mesh::perlin::Perlin3d;
 ///
 /// Has interleaved position (floatx3), and color (floatx3) attributes.
 #[wasm_bindgen]
-pub fn water_buf(time_millis: f32) -> Vec<f32> {
+pub fn water_buf(
+    time_millis: f32,
+    height_scale: f32,
+    water_radius: f32,
+    position: &[f32],
+    green: &[f32],
+    blue: &[f32],
+) -> Vec<f32> {
     let max_level_of_detail = 5; // logarithmic units
-    let water_radius = 30.0;
     let block_count = 10;
+    let green = Vector3::from_row_slice(green);
+    let blue = Vector3::from_row_slice(blue);
+    let position = Point3::from_slice(position);
 
     // have 2 * water_radius == scale_factor * block_count * 2 ^ max_level_of_detail
     // so scene_pos = water_pos * scale_factor - water_radius
@@ -28,7 +37,8 @@ pub fn water_buf(time_millis: f32) -> Vec<f32> {
 
     let get_level_of_detail = |water_point: &Point2<i32>| -> u32 {
         let scene_point = water_point.map(|x| x as f32 * scale_factor - water_radius);
-        match distance(&scene_point, &Point2::origin()) / water_radius {
+        let scene_point = Point3::new(scene_point[0], 0.0, scene_point[1]);
+        match distance(&scene_point, &position) / water_radius {
             ..0.1 => 5,
             ..0.2 => 4,
             ..0.5 => 3,
@@ -44,7 +54,7 @@ pub fn water_buf(time_millis: f32) -> Vec<f32> {
             &Point3::new(perlin_point.x, perlin_point.y, time_millis / 3e3),
             "height",
         );
-        Point3::new(scene_point[0], height * 2.0, scene_point[1])
+        Point3::new(scene_point[0], height * height_scale, scene_point[1])
     };
     let get_color = |scene_point: &Point3<f32>| -> Color {
         let perlin_point = scene_point.coords.scale(0.3);
@@ -53,9 +63,7 @@ pub fn water_buf(time_millis: f32) -> Vec<f32> {
                 - Vector3::from_element(1e3)),
             "color",
         );
-        let green = Vector3::from([0.0, 0.5, 0.8]);
-        let blue = Vector3::from([0.0, 0.0, 0.8]);
-        let color = blue.lerp(&green, alpha);
+        let color = blue.lerp(&green, alpha * 0.2);
         Color { rgb: color.into() }
     };
 

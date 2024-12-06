@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import React from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
+
 import {
     water_buf_position_size,
     water_buf_position_offset,
@@ -17,44 +19,49 @@ export default function () {
         specular: new THREE.Color(0x000055),
     });
 
-    const time_millis = document.timeline.currentTime;
-    const buf = new THREE.InterleavedBuffer(
-        water_buf(time_millis),
-        water_buf_stride_floats()
-    );
-    const position = new THREE.InterleavedBufferAttribute(
-        buf,
-        water_buf_position_size(),
-        water_buf_position_offset()
-    );
-    const color = new THREE.InterleavedBufferAttribute(
-        buf,
-        water_buf_color_size(),
-        water_buf_color_offset()
-    );
+    const height_scale = 0.5;
+    const water_radius = 50;
+    const blue = new Float32Array([0.4, 0.79, 0.72]);
+    const green = new Float32Array([0.13, 0.45, 0.53]);
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', position);
-    geometry.setAttribute('color', color);
+    const { camera } = useThree();
 
-    const requestRef = React.useRef();
-
-    const animate = () => {
-        requestRef.current = requestAnimationFrame(animate);
+    const get_buf = () => {
         const time_millis = document.timeline.currentTime;
-        const newBuf = new THREE.InterleavedBuffer(
-            water_buf(time_millis),
-            water_buf_stride_floats()
+        const position = new Float32Array([...camera.position]);
+        return water_buf(
+            time_millis, 
+            height_scale, 
+            water_radius, 
+            position,
+            blue, 
+            green
         );
-        buf.copy(newBuf);
-        geometry.attributes.position.needsUpdate = true;
-        geometry.attributes.color.needsUpdate = true;
     };
 
-    React.useEffect(() => {
-        requestRef.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(requestRef.current);
-    }, []);
+    const geometry = new THREE.BufferGeometry();
+
+    useFrame(() => {
+        const buf = new THREE.InterleavedBuffer(
+            get_buf(),
+            water_buf_stride_floats()
+        );
+        const position = new THREE.InterleavedBufferAttribute(
+            buf,
+            water_buf_position_size(),
+            water_buf_position_offset()
+        );
+        const color = new THREE.InterleavedBufferAttribute(
+            buf,
+            water_buf_color_size(),
+            water_buf_color_offset()
+        );
+    
+        geometry.setAttribute('position', position);
+        geometry.setAttribute('color', color);    
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.color.needsUpdate = true;
+    });
 
     return <mesh geometry={geometry} material={material} />;
 }

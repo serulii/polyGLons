@@ -35,30 +35,6 @@ import Terrain from './components/Terrain';
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
-function Rig(left, right, top, bottom, near, far) {
-    const { camera } = useThree();
-    camera.updateProjectionMatrix();
-    // console.log(camera.projectionMatrix);
-    let orthoMatrix = camera.projectionMatrix.makeOrthographic(left, right, top, bottom, near, far);
-    console.log(orthoMatrix);
-    camera.left = left;
-    camera.right = right;
-    camera.top = top;
-    camera.bottom = bottom;
-    camera.near = near;
-    camera.far = far;
-
-    camera.updateProjectionMatrix();
-    console.log(camera.projectionMatrix);
-
-
-    // camera.position.set(0, 20, 40);
-    // camera.zoom = 0.3;
-    camera.makeDefault;
-    camera.onUpdate = (self) => self.lookAt(0, 0, 0);
-    return <></>
-}
-
 function Scene() {
     const [gameView, setGameView] = useState(false);
     const [params, setParams] = useState({
@@ -111,10 +87,10 @@ function Scene() {
             );
 
         gui.add(params, 'radius', 0, 100)
-        .name('Radius')
-        .onChange((value) =>
-            setParams((prev) => ({ ...prev, radius: value }))
-        );
+            .name('Radius')
+            .onChange((value) =>
+                setParams((prev) => ({ ...prev, radius: value }))
+            );
 
         return () => gui.destroy();
     }, [params]);
@@ -178,25 +154,25 @@ function Scene() {
           <Terrain params={params} />
           <Water />
 
-          {/* <primitive
+                {/* <primitive
               object={scene}
               position={[0, 1, 0]}
               children-0-castShadow
           /> */}
-          <EffectComposer>
-              <Bloom
-                  intensity={0}
-                  luminanceThreshold={0}
-                  luminanceSmoothing={0.9}
-              />
-          </EffectComposer>
-          <FirstPersonControls lookSpeed={0.05} />
-          {/* <FirstPersonCamera/> */}
-          <FlyControls autoForward={false} movementSpeed={2} />
-      </Canvas>
-      <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
-      {/* <button className="button1" onClick={() => changeSong()}>Change Song</button> */}
-      </>
+                <EffectComposer>
+                    <Bloom
+                        intensity={0}
+                        luminanceThreshold={0}
+                        luminanceSmoothing={0.9}
+                    />
+                </EffectComposer>
+                <FirstPersonControls lookSpeed={0.2} />
+                <FlyControls autoForward={false} movementSpeed={2} />
+            </Canvas>
+            <button className="button" onClick={() => setGameView(!gameView)}>
+                Change View
+            </button>
+        </>
     );
 }
 
