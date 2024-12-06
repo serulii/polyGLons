@@ -1,7 +1,8 @@
-import Island from "./Island";
+import Island from './Island';
 import * as THREE from 'three';
-import { useState, useEffect } from "react";
-import { SCENE_DIMENSION } from "../utils/constants";
+import { useState, useEffect } from 'react';
+import { SCENE_DIMENSION } from '../utils/constants';
+import { BIOME_COLORS } from '../utils/constants';
 
 function generateIslands(numIslands, bounds, minRadius, maxRadius) {
     const islands = [];
@@ -40,8 +41,13 @@ function generateIslands(numIslands, bounds, minRadius, maxRadius) {
                     yMax - maxRadius
                 );
                 const radius = THREE.MathUtils.randFloat(minRadius, maxRadius);
-
-                newIsland = { x, y, radius };
+                // pick random biome from list of biomes
+                var randomBiome = function (obj) {
+                    var keys = Object.keys(obj);
+                    return keys[(keys.length * Math.random()) << 0];
+                };
+                var biome = randomBiome(BIOME_COLORS).toString();
+                newIsland = { x, y, radius, biome };
                 usedCells.add(cellKey);
                 foundCell = true;
             }
@@ -55,7 +61,12 @@ function generateIslands(numIslands, bounds, minRadius, maxRadius) {
 }
 
 export default function Terrain({ params }) {
-    const bounds = { xMin: -SCENE_DIMENSION / 2, xMax: SCENE_DIMENSION / 2, yMin: -SCENE_DIMENSION / 2, yMax: SCENE_DIMENSION / 2 };
+    const bounds = {
+        xMin: -SCENE_DIMENSION / 2,
+        xMax: SCENE_DIMENSION / 2,
+        yMin: -SCENE_DIMENSION / 2,
+        yMax: SCENE_DIMENSION / 2,
+    };
     const [islands, setIslands] = useState([]);
 
     useEffect(() => {
@@ -70,6 +81,7 @@ export default function Terrain({ params }) {
                     key={index}
                     params={{ ...params, radius: island.radius }}
                     center={{ x: island.x, y: island.y }}
+                    biomeType={island.biome}
                 />
             ))}
         </group>

@@ -14,8 +14,8 @@ function getColor(height, colors) {
     return colors[colors.length - 1].color;
 }
 
-function createTerrain(params, center) {
-    console.log("Creating terrain at:", center);
+function createTerrain(params, center, biomeType) {
+    console.log('Creating terrain at:', center);
     var geometry = new THREE.PlaneGeometry(100, 100, 50, 50);
     var nonIndexedGeometry = geometry.toNonIndexed();
 
@@ -42,7 +42,8 @@ function createTerrain(params, center) {
             const distortScale = 0.1;
             const distortStrength = 3;
             const distortNoise = noise2D(x * distortScale, y * distortScale);
-            const distortedRadius = params.radius + distortNoise * distortStrength;
+            const distortedRadius =
+                params.radius + distortNoise * distortStrength;
             const distFromCenter = Math.sqrt(x * x + y * y) / distortedRadius;
 
             // cubic taper for smoother transition :)
@@ -79,8 +80,8 @@ function createTerrain(params, center) {
             }
             positions[j + 2] = final;
             let alpha = 1;
-            const color = getColor(positions[i + 2], BIOME_COLORS['FOREST']);
-            if(color.equals(new THREE.Color(0.2, 0.5, 0.7))){
+            const color = getColor(positions[i + 2], BIOME_COLORS[biomeType]);
+            if (color.equals(new THREE.Color(0.2, 0.5, 0.7))) {
                 alpha = 0;
             }
             colors.push(...color.toArray());
@@ -97,7 +98,7 @@ function createTerrain(params, center) {
     return terrain;
 }
 
-export default function Island({ params, center }) {
+export default function Island({ params, center, biomeType }) {
     const terrainRef = useRef();
 
     useEffect(() => {
@@ -107,7 +108,7 @@ export default function Island({ params, center }) {
             const oldTerrain = currentTerrain.children[0];
             currentTerrain.remove(oldTerrain);
         }
-        const newTerrain = createTerrain(params, center);
+        const newTerrain = createTerrain(params, center, biomeType);
         currentTerrain.add(newTerrain);
     }, [params]);
 
