@@ -5,7 +5,7 @@
  *
  * Has interleaved position (floatx3), and color (floatx3) attributes.
  */
-export function water_buf(time_millis: number, height_scale: number, water_radius: number, green: Float32Array, blue: Float32Array): Float32Array;
+export function water_buf(time_millis: number, height_scale: number, water_radius: number, position: Float32Array, green: Float32Array, blue: Float32Array): Float32Array;
 export function water_buf_stride_floats(): number;
 export function water_buf_position_size(): number;
 export function water_buf_position_offset(): number;
@@ -16,7 +16,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly water_buf: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number];
+  readonly water_buf: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number];
   readonly water_buf_stride_floats: () => number;
   readonly water_buf_position_offset: () => number;
   readonly water_buf_color_size: () => number;

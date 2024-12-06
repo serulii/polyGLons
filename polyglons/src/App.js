@@ -148,7 +148,7 @@ function Scene() {
         <>
             <Canvas>
                 <AudioPlayer />
-                <Rig />
+                {/* <Rig /> */}
                 {!gameView && <Skybox />}
                 {/* <ambientLight intensity={0} /> */}
                 <directionalLight intensity={1} />
@@ -172,7 +172,7 @@ function Scene() {
                         luminanceSmoothing={0.9}
                     />
                 </EffectComposer>
-                <FirstPersonControls lookSpeed={0.05} />
+                <FirstPersonControls lookSpeed={0.2} />
                 <FlyControls autoForward={false} movementSpeed={2} />
             </Canvas>
             <button className="button" onClick={() => setGameView(!gameView)}>

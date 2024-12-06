@@ -47,19 +47,22 @@ function getArrayF32FromWasm0(ptr, len) {
  * @param {number} time_millis
  * @param {number} height_scale
  * @param {number} water_radius
+ * @param {Float32Array} position
  * @param {Float32Array} green
  * @param {Float32Array} blue
  * @returns {Float32Array}
  */
-export function water_buf(time_millis, height_scale, water_radius, green, blue) {
-    const ptr0 = passArrayF32ToWasm0(green, wasm.__wbindgen_malloc);
+export function water_buf(time_millis, height_scale, water_radius, position, green, blue) {
+    const ptr0 = passArrayF32ToWasm0(position, wasm.__wbindgen_malloc);
     const len0 = WASM_VECTOR_LEN;
-    const ptr1 = passArrayF32ToWasm0(blue, wasm.__wbindgen_malloc);
+    const ptr1 = passArrayF32ToWasm0(green, wasm.__wbindgen_malloc);
     const len1 = WASM_VECTOR_LEN;
-    const ret = wasm.water_buf(time_millis, height_scale, water_radius, ptr0, len0, ptr1, len1);
-    var v3 = getArrayF32FromWasm0(ret[0], ret[1]).slice();
+    const ptr2 = passArrayF32ToWasm0(blue, wasm.__wbindgen_malloc);
+    const len2 = WASM_VECTOR_LEN;
+    const ret = wasm.water_buf(time_millis, height_scale, water_radius, ptr0, len0, ptr1, len1, ptr2, len2);
+    var v4 = getArrayF32FromWasm0(ret[0], ret[1]).slice();
     wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-    return v3;
+    return v4;
 }
 
 /**
