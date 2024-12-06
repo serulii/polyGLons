@@ -10,4 +10,7 @@ export const BIOME_COLORS = {
     ],
 };
 
-export const SCENE_DIMENSION = 100;
+const SCENE_DIMENSION = 100;
+const TESSELATION = 100;
+
+export { SCENE_DIMENSION, TESSELATION }
