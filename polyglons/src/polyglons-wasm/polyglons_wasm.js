@@ -27,6 +27,15 @@ function getFloat32ArrayMemory0() {
     return cachedFloat32ArrayMemory0;
 }
 
+let WASM_VECTOR_LEN = 0;
+
+function passArrayF32ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 4, 4) >>> 0;
+    getFloat32ArrayMemory0().set(arg, ptr / 4);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
+}
+
 function getArrayF32FromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return getFloat32ArrayMemory0().subarray(ptr / 4, ptr / 4 + len);
@@ -36,13 +45,21 @@ function getArrayF32FromWasm0(ptr, len) {
  *
  * Has interleaved position (floatx3), and color (floatx3) attributes.
  * @param {number} time_millis
+ * @param {number} height_scale
+ * @param {number} water_radius
+ * @param {Float32Array} green
+ * @param {Float32Array} blue
  * @returns {Float32Array}
  */
-export function water_buf(time_millis) {
-    const ret = wasm.water_buf(time_millis);
-    var v1 = getArrayF32FromWasm0(ret[0], ret[1]).slice();
+export function water_buf(time_millis, height_scale, water_radius, green, blue) {
+    const ptr0 = passArrayF32ToWasm0(green, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passArrayF32ToWasm0(blue, wasm.__wbindgen_malloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.water_buf(time_millis, height_scale, water_radius, ptr0, len0, ptr1, len1);
+    var v3 = getArrayF32FromWasm0(ret[0], ret[1]).slice();
     wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-    return v1;
+    return v3;
 }
 
 /**

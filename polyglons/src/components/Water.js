@@ -17,9 +17,18 @@ export default function () {
         specular: new THREE.Color(0x000055),
     });
 
+    const height_scale = 0.5;
+    const water_radius = 50;
+    const blue = new Float32Array([0.4, 0.79, 0.72]);
+    const green = new Float32Array([0.13, 0.45, 0.53]);
+
+    const get_buf = () => {
+        return water_buf(time_millis, height_scale, water_radius, blue, green);
+    };
+
     const time_millis = document.timeline.currentTime;
     const buf = new THREE.InterleavedBuffer(
-        water_buf(time_millis),
+        get_buf(),
         water_buf_stride_floats()
     );
     const position = new THREE.InterleavedBufferAttribute(
@@ -43,7 +52,7 @@ export default function () {
         requestRef.current = requestAnimationFrame(animate);
         const time_millis = document.timeline.currentTime;
         const newBuf = new THREE.InterleavedBuffer(
-            water_buf(time_millis),
+            get_buf(),
             water_buf_stride_floats()
         );
         buf.copy(newBuf);
