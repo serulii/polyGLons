@@ -14,7 +14,7 @@ function getColor(height, colors) {
     return colors[colors.length - 1].color;
 }
 
-function createTerrain(params, center) {
+function createTerrain(params, center, biomeType) {
     // TODO: make a maxRadius variable based on radius to set size of plane
     var geometry = new THREE.PlaneGeometry(50, 50, TESSELATION, TESSELATION);
     geometry.translate(-center.x, -center.y, 0);
@@ -82,9 +82,9 @@ function createTerrain(params, center) {
             positions[j + 2] = final;
             let alpha = 1;
             const color = getColor(positions[i + 2], BIOME_COLORS[biomeType]);
-            if (color.equals(new THREE.Color(0.2, 0.5, 0.7))) {
-                alpha = 0;
-            }
+            // if (color.equals(new THREE.Color(0.2, 0.5, 0.7))) {
+            //     alpha = 0;
+            // }
             colors.push(...color.toArray());
             colors.push(alpha);
         }

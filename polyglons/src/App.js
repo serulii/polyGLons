@@ -151,7 +151,12 @@ function Scene() {
                 <Rig />
                 {!gameView && <Skybox />}
                 {/* <ambientLight intensity={0} /> */}
-                <directionalLight intensity={2} />
+                <directionalLight intensity={1} />
+                <hemisphereLight
+                    intensity={1}
+                    groundColor={'ffd466'}
+                    skyColor={'170fff'}
+                />
                 <Terrain params={params} />
                 <Water />
 

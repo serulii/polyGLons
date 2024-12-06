@@ -10,18 +10,18 @@ export const BIOME_COLORS = {
     ],
 
     DESERT: [
-        { height: 0.0, color: new THREE.Color(0.2, 0.5, 0.7) },
-        { height: 0.5, color: new THREE.Color(1, 0.788, 0.349) },
-        { height: 1.5, color: new THREE.Color(1, 0.835, 0.376) },
-        { height: 2.0, color: new THREE.Color(1, 0.882, 0.533) },
-        { height: 3.0, color: new THREE.Color(1, 0.902, 0.612) },
+        { height: 0.0, color: new THREE.Color(0.8, 0.345, 0.212) },
+        { height: 0.5, color: new THREE.Color(0.922, 0.51, 0.059) },
+        { height: 1.5, color: new THREE.Color(0.961, 0.663, 0.157) },
+        { height: 2.0, color: new THREE.Color(1, 0.788, 0.349) },
+        { height: 3.0, color: new THREE.Color(1, 0.82, 0.286) },
     ],
 
     SNOWY: [
-        { height: 0.0, color: new THREE.Color(0.2, 0.5, 0.7) },
-        { height: 0.5, color: new THREE.Color(0.431, 0.353, 0.294) },
-        { height: 1.5, color: new THREE.Color(0.529, 0.443, 0.38) },
-        { height: 2.0, color: new THREE.Color(0.95, 0.92, 0.93) },
+        { height: 0.0, color: new THREE.Color(0.2, 0.157, 0.141) },
+        { height: 0.5, color: new THREE.Color(0.231, 0.208, 0.184) },
+        { height: 1.5, color: new THREE.Color(0.322, 0.278, 0.231) },
+        { height: 2.0, color: new THREE.Color(0.906, 0.929, 0.961) },
         { height: 3.0, color: new THREE.Color(1, 1, 1) },
     ],
 };
@@ -29,4 +29,4 @@ export const BIOME_COLORS = {
 const SCENE_DIMENSION = 100;
 const TESSELATION = 100;
 
-export { SCENE_DIMENSION, TESSELATION }
+export { SCENE_DIMENSION, TESSELATION };
