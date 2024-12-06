@@ -171,7 +171,7 @@ function Scene() {
                         luminanceSmoothing={0.9}
                     />
                 </EffectComposer>
-                <FirstPersonControls lookSpeed={0.2} />
+                <PointerLockControls lookSpeed={0.2} />
                 <FlyControls autoForward={false} movementSpeed={2} />
             </Canvas>
             <button className="button" onClick={() => setGameView(!gameView)}>
