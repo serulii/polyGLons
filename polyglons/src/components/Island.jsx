@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { createNoise2D } from 'simplex-noise';
 import { useRef, useEffect } from 'react';
-import { BIOME_COLORS } from '../utils/constants';
+import { BIOME_COLORS, TESSELATION } from '../utils/constants';
 
 function getColor(height, colors) {
     for (let i = 0; i < colors.length; i++) {
@@ -15,8 +15,9 @@ function getColor(height, colors) {
 }
 
 function createTerrain(params, center) {
-    console.log("Creating terrain at:", center);
-    var geometry = new THREE.PlaneGeometry(100, 100, 50, 50);
+    // TODO: make a maxRadius variable based on radius to set size of plane
+    var geometry = new THREE.PlaneGeometry(50, 50, TESSELATION, TESSELATION);
+    geometry.translate(-center.x, -center.y, 0);
     var nonIndexedGeometry = geometry.toNonIndexed();
 
     const material = new THREE.MeshLambertMaterial({
@@ -40,7 +41,7 @@ function createTerrain(params, center) {
             const y = positions[j + 1] + center.y;
 
             const distortScale = 0.1;
-            const distortStrength = 3;
+            const distortStrength = 2;
             const distortNoise = noise2D(x * distortScale, y * distortScale);
             const distortedRadius = params.radius + distortNoise * distortStrength;
             const distFromCenter = Math.sqrt(x * x + y * y) / distortedRadius;
@@ -70,8 +71,8 @@ function createTerrain(params, center) {
             let final = Math.pow(total, params.exponentiation) * params.height;
 
             // apply taper if it's towards the edge
-            if (distFromCenter > 0.75) {
-                final = THREE.MathUtils.lerp(0, final, taper);
+            if (distFromCenter > 0.5) {
+                final = THREE.MathUtils.lerp(-1, final, taper); // bottom of mesh -> -1
             }
             // add a base height for the island
             if (final > 0) {
@@ -80,9 +81,9 @@ function createTerrain(params, center) {
             positions[j + 2] = final;
             let alpha = 1;
             const color = getColor(positions[i + 2], BIOME_COLORS['FOREST']);
-            if(color.equals(new THREE.Color(0.2, 0.5, 0.7))){
-                alpha = 0;
-            }
+            // if(color.equals(new THREE.Color(0.2, 0.5, 0.7))){
+            //     alpha = 0;
+            // }
             colors.push(...color.toArray());
             colors.push(alpha);
         }
