@@ -1,4 +1,5 @@
 import './css/App.css';
+import './css/style.css';
 import React from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { FlyControls, PointerLockControls, FirstPersonControls } from '@react-three/drei';
@@ -12,7 +13,6 @@ import Skybox from './components/skybox';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import Water from './components/Water';
 import AudioPlayer from './components/audio';
-import changeSong from './components/audio';
 
 // import CustomCamera from './components/CustomCamera'
 
@@ -20,6 +20,7 @@ import changeSong from './components/audio';
 
 import * as dat from 'dat.gui';
 import Terrain from './components/Terrain';
+import Controls from './components/Controls';
 
 // https://sbcode.net/react-three-fiber/gltfloader/
 // https://threejs.org/docs/#api/en/objects/Mesh
@@ -95,34 +96,11 @@ function Scene() {
         return () => gui.destroy();
     }, [params]);
 
-    // https://threejs.org/docs/#api/en/core/BufferGeometry
-    const vertices = new Float32Array([
-        -1.0,
-        -1.0,
-        1.0, // v0
-        1.0,
-        -1.0,
-        1.0, // v1
-        1.0,
-        1.0,
-        1.0, // v2
-        -1.0,
-        1.0,
-        1.0, // v3
-    ]);
-
-    const indices = [0, 1, 2, 2, 3, 0];
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.setIndex(indices);
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-
     generateObjects(scene);
-    // https://sbcode.net/react-three-fiber/use-loader/
-
     return (
       <>
-        <AudioPlayer/>
+      <Controls/>
+      <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
       <Canvas>
       {/* <Rig  
         left={-50}
@@ -174,9 +152,6 @@ function Scene() {
                 <FirstPersonControls lookSpeed={0.2} />
                 <FlyControls autoForward={false} movementSpeed={2} />
             </Canvas>
-            <button className="button" onClick={() => setGameView(!gameView)}>
-                Change View
-            </button>
         </>
     );
 }

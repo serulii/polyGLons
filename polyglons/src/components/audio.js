@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import '../css/style.css'
 
 const AudioPlayer = () => {
   const songs = ['Flower Garden', 'Overworld', 'Athletic', 'Map', 'Big Boss'];
@@ -39,7 +40,17 @@ const AudioPlayer = () => {
     audioRef.current = null;
   };
 
-  return <button onClick={changeSong}> change song </button>
+  return (
+    <div className='controls'>
+      <button className="control-button" onClick={changeSong}>
+        <img 
+          src="/icons/next-song.svg" 
+          alt="Change song" 
+          className="icon" 
+        />
+      </button>
+    </div>
+  )
 };
 
 export default AudioPlayer;
