@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { createNoise2D } from 'simplex-noise';
 import { useRef, useEffect } from 'react';
-import { BIOME_COLORS, TESSELATION } from '../utils/constants';
+import { BIOME_COLORS, BIOME_PEAKS, TESSELATION } from '../utils/constants';
 
-function getColor(height, colors) {
+function getColor(height, biomeType) {
+    const colors = BIOME_COLORS[biomeType]
     for (let i = 0; i < colors.length; i++) {
         const { height: thresholdHeight, color } = colors[i];
 
@@ -12,6 +13,18 @@ function getColor(height, colors) {
         }
     }
     return colors[colors.length - 1].color;
+}
+
+function modifyPeaks(height, biomeType) {
+    const variations = BIOME_PEAKS[biomeType]
+    for (let i = 0; i < variations.length; i++) {
+        const { height: thresholdHeight, variation: x } = variations[i];
+
+        if (height <= thresholdHeight) {
+            return height * x;
+        }
+    }
+    return height * variations[variations.length - 1].variation;
 }
 
 function createTerrain(params, center, biomeType) {
@@ -77,14 +90,13 @@ function createTerrain(params, center, biomeType) {
             }
             // add a base height for the island
             if (final > 0) {
+                // change peaks based on biome
+                final = modifyPeaks(final, biomeType);
                 final += baseHeight;
             }
             positions[j + 2] = final;
             let alpha = 1;
-            const color = getColor(positions[i + 2], BIOME_COLORS[biomeType]);
-            // if (color.equals(new THREE.Color(0.2, 0.5, 0.7))) {
-            //     alpha = 0;
-            // }
+            const color = getColor(positions[i + 2], biomeType);
             colors.push(...color.toArray());
             colors.push(alpha);
         }
