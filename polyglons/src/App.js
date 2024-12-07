@@ -47,9 +47,6 @@ function Scene() {
         height: 5.5,
         radius: 20,
     });
-    const scene = new THREE.Scene();
-
-    
 
     useEffect(() => {
         const gui = new dat.GUI();
@@ -96,7 +93,7 @@ function Scene() {
         return () => gui.destroy();
     }, [params]);
 
-    generateObjects(scene);
+   
     return (
       <>
       <Controls/>
@@ -142,16 +139,19 @@ function Scene() {
               position={[0, 1, 0]}
               children-0-castShadow
           /> */}
-                <EffectComposer>
+                {/* <EffectComposer>
                     <Bloom
                         intensity={0}
                         luminanceThreshold={0}
                         luminanceSmoothing={0.9}
-                    />
-                </EffectComposer>
+                    /> */}
+                {/* </EffectComposer> */}
                 <PointerLockControls lookSpeed={0.2} />
                 <FlyControls autoForward={false} movementSpeed={2} />
             </Canvas>
+            <button className="button" onClick={() => setGameView(!gameView)}>
+                Change View
+            </button>
         </>
     );
 }
