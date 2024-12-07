@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import '../css/style.css'
 
 const AudioPlayer = () => {
   const songs = ['Flower Garden', 'Overworld', 'Athletic', 'Map', 'Big Boss'];
   const [songIndex, setSongIndex] = useState(0);
+  const [volumeOn, setVolumeOn] = useState(true);
   const audioRef = useRef();
 
   useEffect(() => {
@@ -27,7 +29,6 @@ const AudioPlayer = () => {
           audio.setLoop(false);
           audio.setVolume(0.15);
           audio.play();
-          
         }
       );
     }
@@ -39,7 +40,34 @@ const AudioPlayer = () => {
     audioRef.current = null;
   };
 
-  return <button onClick={changeSong}> change song </button>
+  const toggleVolume = () => {
+    if (volumeOn) {
+      audioRef.current.setVolume(0);
+      setVolumeOn(false);
+    } else {
+      audioRef.current.setVolume(0.15);
+      setVolumeOn(true);
+    }
+  }
+
+  return (
+    <>
+    <button className="control-button" onClick={changeSong}>
+      <img
+        src="/icons/next-song.svg"
+        alt="Change song"
+        className="icon"
+      />
+    </button>
+    <button className="control-button" onClick={toggleVolume}>
+      <img 
+        src={volumeOn ? "/icons/sound-on.svg" : "/icons/sound-off.svg"}
+        alt="Toggle volume"
+        className="icon"
+      />
+    </button>
+    </>
+  )
 };
 
 export default AudioPlayer;
