@@ -42,7 +42,7 @@ export default function () {
 
     const geometry = new THREE.BufferGeometry();
 
-    useFrame(() => {
+    const updateWater = () => {
         const buf = new THREE.InterleavedBuffer(
             get_buf(),
             water_buf_stride_floats()
@@ -62,6 +62,10 @@ export default function () {
         geometry.setAttribute('color', color);    
         geometry.attributes.position.needsUpdate = true;
         geometry.attributes.color.needsUpdate = true;
+    };
+
+    useFrame(() => {
+        updateWater();
     });
 
     return <mesh geometry={geometry} material={material} />;

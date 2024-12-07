@@ -6,9 +6,6 @@ description = "package for dynamic terrain generation and other features"
 repository = "https://github.com/serulii/polyGLons"
 license = "Apache-2.0 OR MIT"
 
-[patch.crates-io]
-wasm-bindgen = { git = "https://github.com/rustwasm/wasm-bindgen" }
-
 [package.metadata.wasm-pack.profile.dev]
 wasm-opt = false
 
