@@ -21,7 +21,7 @@ export default function () {
     });
 
     const height_scale = 0.5;
-    const water_radius = SCENE_DIMENSION / 2.0;
+    const water_radius = SCENE_DIMENSION * 10.0 / 2.0;
     const blue = new Float32Array([0.4, 0.79, 0.72]);
     const green = new Float32Array([0.13, 0.45, 0.53]);
 
