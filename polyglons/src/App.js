@@ -39,11 +39,11 @@ import Controls from './components/Controls';
 function Rig({ ortho }) {
     const {camera} = useThree();
     if (ortho) {
-        camera.projectionMatrix.makeOrthographic(-50, 50, 50, -50, -1000, 1000);
-        camera.lookAt(0.0, 10.0, 0.0);
         camera.position.y = 20.0;
         camera.position.x = -20.0;
         camera.position.z = 20.0;
+        camera.projectionMatrix.makeOrthographic(-50, 50, 50, -50, -1000, 1000);
+        camera.lookAt(0.0, 10.0, 0.0);
     } else {
         const sampleCamera = new THREE.PerspectiveCamera();
         camera.projectionMatrix.copy(sampleCamera.projectionMatrix);
