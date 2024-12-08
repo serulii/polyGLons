@@ -17,16 +17,6 @@ function getStringFromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
-/**
- * @param {number} x
- * @param {number} y
- * @param {number} z
- * @returns {number}
- */
-export function perlin(x, y, z) {
-    const ret = wasm.perlin(x, y, z);
-    return ret;
-}
 
 let cachedFloat32ArrayMemory0 = null;
 
@@ -113,6 +103,41 @@ export function water_buf_color_size() {
 export function water_buf_color_offset() {
     const ret = wasm.water_buf_color_offset();
     return ret >>> 0;
+}
+
+const Perlin3dFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_perlin3d_free(ptr >>> 0, 1));
+
+export class Perlin3d {
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        Perlin3dFinalization.unregister(this);
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_perlin3d_free(ptr, 0);
+    }
+    constructor() {
+        const ret = wasm.perlin3d_new();
+        this.__wbg_ptr = ret >>> 0;
+        Perlin3dFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     * @returns {number}
+     */
+    static sample(x, y, z) {
+        const ret = wasm.perlin3d_sample(x, y, z);
+        return ret;
+    }
 }
 
 async function __wbg_load(module, imports) {

@@ -1,6 +1,5 @@
 /* tslint:disable */
 /* eslint-disable */
-export function perlin(x: number, y: number, z: number): number;
 /**
  * Gets a raw mesh representing water in a scene.
  *
@@ -12,12 +11,19 @@ export function water_buf_position_size(): number;
 export function water_buf_position_offset(): number;
 export function water_buf_color_size(): number;
 export function water_buf_color_offset(): number;
+export class Perlin3d {
+  free(): void;
+  constructor();
+  static sample(x: number, y: number, z: number): number;
+}
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly perlin: (a: number, b: number, c: number) => number;
+  readonly __wbg_perlin3d_free: (a: number, b: number) => void;
+  readonly perlin3d_new: () => number;
+  readonly perlin3d_sample: (a: number, b: number, c: number) => number;
   readonly water_buf: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number];
   readonly water_buf_stride_floats: () => number;
   readonly water_buf_position_offset: () => number;
