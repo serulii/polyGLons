@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export const perlin: (a: number, b: number, c: number) => number;
 export const water_buf: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number];
 export const water_buf_stride_floats: () => number;
 export const water_buf_position_offset: () => number;

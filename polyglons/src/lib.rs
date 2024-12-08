@@ -1,16 +1,25 @@
 use crate::mesh::buf::ExtendTileBuf;
 use crate::mesh::buf::{Tile, TileBuf};
+
 use crate::water::shapes::Mesh;
 use bytemuck::{cast_vec, Pod, Zeroable};
 use nalgebra::{distance, Point2, Point3, Vector2, Vector3};
 use rustc_hash::FxHashMap;
 use std::mem;
 use wasm_bindgen::prelude::wasm_bindgen;
+use noise::NoiseFn;
 
 mod mesh;
 mod water;
 
 use crate::mesh::perlin::Perlin3d;
+
+#[wasm_bindgen]
+pub fn perlin(x: f64, y: f64, z: f64) -> f64 {
+    let perlin = noise::Perlin::default();
+    let xyz = [x, y, z];
+    perlin.get(xyz)
+}
 
 /// Gets a raw mesh representing water in a scene.
 ///

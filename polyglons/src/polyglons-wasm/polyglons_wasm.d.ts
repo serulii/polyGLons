@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export function perlin(x: number, y: number, z: number): number;
 /**
  * Gets a raw mesh representing water in a scene.
  *
@@ -16,6 +17,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly perlin: (a: number, b: number, c: number) => number;
   readonly water_buf: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number];
   readonly water_buf_stride_floats: () => number;
   readonly water_buf_position_offset: () => number;

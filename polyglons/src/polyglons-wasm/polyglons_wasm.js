@@ -17,6 +17,16 @@ function getStringFromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
+ * @returns {number}
+ */
+export function perlin(x, y, z) {
+    const ret = wasm.perlin(x, y, z);
+    return ret;
+}
 
 let cachedFloat32ArrayMemory0 = null;
 
