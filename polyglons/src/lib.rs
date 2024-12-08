@@ -28,10 +28,9 @@ impl Perlin3d {
         }
     }
 
-    pub fn sample(x: f64, y: f64, z: f64) -> f64 {
-        let perlin = noise::Perlin::default();
+    pub fn sample(&self, x: f64, y: f64, z: f64) -> f64 {
         let xyz = [x, y, z];
-        perlin.get(xyz)
+        self.perlin.get(xyz)
     }
 }
 

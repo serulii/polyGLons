@@ -134,8 +134,8 @@ export class Perlin3d {
      * @param {number} z
      * @returns {number}
      */
-    static sample(x, y, z) {
-        const ret = wasm.perlin3d_sample(x, y, z);
+    sample(x, y, z) {
+        const ret = wasm.perlin3d_sample(this.__wbg_ptr, x, y, z);
         return ret;
     }
 }
