@@ -36,8 +36,22 @@ import Controls from './components/Controls';
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
+function Rig({ ortho }) {
+    const {camera} = useThree();
+    if (ortho) {
+        camera.projectionMatrix.makeOrthographic(-50, 50, 50, -50, -1000, 1000);
+        camera.lookAt(0.0, 10.0, 0.0);
+        camera.position.y = 20.0;
+        camera.position.x = -20.0;
+        camera.position.z = 20.0;
+    } else {
+        const sampleCamera = new THREE.PerspectiveCamera();
+        camera.projectionMatrix.copy(sampleCamera.projectionMatrix);
+    }
+}
+
 function Scene() {
-    const [gameView, setGameView] = useState(false);
+    const [gameView, setGameView] = useState(true);
     const [params, setParams] = useState({
         scale: 10,
         octaves: 8,
@@ -92,63 +106,29 @@ function Scene() {
 
         return () => gui.destroy();
     }, [params]);
-
    
     return (
-      <>
-      <Controls/>
-      <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
-      <Canvas>
-      {/* <Rig  
-        left={-50}
-        right={50}
-        top={50}
-        bottom={-50}
-        near={0}
-        far={100}
-        /> */}
-      {gameView && (
-          <OrthographicCamera
-            left={-50}
-            right={50}
-            top={50}
-            bottom={-50}
-            near={0}
-            far={100}
-            position={[0, 20, 40]}
-            zoom={0.3}
-            makeDefault
-            onUpdate={(self) => self.lookAt(0, 0, 0)}
-          />
-        )}
-        {!gameView && (
-          <Skybox/>
-        )}
-          <ambientLight intensity={0} />
-          <directionalLight intensity={1} />
-          <hemisphereLight
-            intensity={1}
-            groundColor={'ffd466'}
-            skyColor={'170fff'}>
-          </hemisphereLight>
-          <Terrain params={params} />
-          <Water />
-
-                {/* <primitive
-              object={scene}
-              position={[0, 1, 0]}
-              children-0-castShadow
-          /> */}
-                {/* <EffectComposer>
-                    <Bloom
-                        intensity={0}
-                        luminanceThreshold={0}
-                        luminanceSmoothing={0.9}
-                    /> */}
-                {/* </EffectComposer> */}
-                <FirstPersonControls lookSpeed={0.2} />
-                {/* <PointerLockControls lookSpeed={0.2} /> */}
-                <FlyControls autoForward={false} movementSpeed={2} />
+        <>
+            <Controls/>
+            <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
+            <Canvas>
+                <Rig ortho={gameView} />
+                <ambientLight intensity={0} />
+                <directionalLight intensity={1} />
+                <hemisphereLight
+                    intensity={1}
+                    groundColor={'ffd466'}
+                    skyColor={'170fff'}>
+                </hemisphereLight>
+                <Terrain params={params} />
+                <Water useOriginForTesselation={gameView} />
+                {!gameView && <Skybox />}
+                {!gameView && 
+                    <>
+                        <FirstPersonControls lookSpeed={0.2} />
+                        <FlyControls autoForward={false} movementSpeed={2} />
+                    </>
+                }
             </Canvas>
             <button className="button" onClick={() => setGameView(!gameView)}>
                 Change View
