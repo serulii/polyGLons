@@ -4,21 +4,35 @@ use crate::mesh::buf::{Tile, TileBuf};
 use crate::water::shapes::Mesh;
 use bytemuck::{cast_vec, Pod, Zeroable};
 use nalgebra::{distance, Point2, Point3, Vector2, Vector3};
+use noise::NoiseFn;
 use rustc_hash::FxHashMap;
 use std::mem;
 use wasm_bindgen::prelude::wasm_bindgen;
-use noise::NoiseFn;
 
 mod mesh;
 mod water;
 
-use crate::mesh::perlin::Perlin3d;
+use crate::mesh::perlin::Perlin3d as MeshPerlin3d;
 
 #[wasm_bindgen]
-pub fn perlin(x: f64, y: f64, z: f64) -> f64 {
-    let perlin = noise::Perlin::default();
-    let xyz = [x, y, z];
-    perlin.get(xyz)
+pub struct Perlin3d {
+    perlin: noise::Perlin,
+}
+
+#[wasm_bindgen]
+impl Perlin3d {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Perlin3d {
+        Perlin3d {
+            perlin: noise::Perlin::default(),
+        }
+    }
+
+    pub fn sample(x: f64, y: f64, z: f64) -> f64 {
+        let perlin = noise::Perlin::default();
+        let xyz = [x, y, z];
+        perlin.get(xyz)
+    }
 }
 
 /// Gets a raw mesh representing water in a scene.
@@ -55,7 +69,7 @@ pub fn water_buf(
             _ => 0,
         }
     };
-    let perlin = Perlin3d::default();
+    let perlin = MeshPerlin3d::default();
     let get_position = |water_point: &Point2<i32>| -> Point3<f32> {
         let scene_point = water_point.map(|x| x as f32 * scale_factor - water_radius);
         let perlin_point = scene_point.coords.scale(0.3);
