@@ -2,7 +2,7 @@ import { useThree, useFrame } from '@react-three/fiber';
 import Island from './Island';
 import * as THREE from 'three';
 import { useState, useEffect, useRef } from 'react';
-import { SCENE_DIMENSION, FALLOFF_DISTANCE } from '../utils/constants';
+import { SCENE_DIMENSION, FALLOFF_DISTANCE, SEED } from '../utils/constants';
 import { BIOME_COLORS } from '../utils/constants';
 
 export default function levelOfDetail({ params }) {
@@ -58,7 +58,7 @@ export default function levelOfDetail({ params }) {
         }
         group.clear();
         for(let i=0; i<islands.length; i++){
-            group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i]));
+            group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
         }
     });
  

@@ -1,8 +1,5 @@
 import * as THREE from 'three';
-import { useThree } from '@react-three/fiber';
-import { createNoise2D } from 'simplex-noise';
-import { useRef, useEffect } from 'react';
-import { BIOME_COLORS, BIOME_PEAKS, TESSELATION } from '../utils/constants';
+import { BIOME_COLORS, BIOME_PEAKS, TESSELATION, SEED } from '../utils/constants';
 import { Perlin3d } from '../polyglons-wasm/polyglons_wasm';
 
 function getColor(height, biomeType) {
@@ -29,11 +26,13 @@ function modifyPeaks(height, biomeType) {
     return height * variations[variations.length - 1].variation;
 }
 
-export default function Island(params, center, biomeType, lod ) {
-    const newTerrain = createTerrain(params, center, biomeType, lod);
+export default function Island(params, center, biomeType, lod, index) {
+    const factor = index * SEED;
+
+    const newTerrain = createTerrain(params, center, biomeType);
     return newTerrain
 
-    function createTerrain(params, center, biomeType) {
+    function createTerrain() {
 
         // TODO: make a maxRadius variable based on radius to set size of plane
         let tesselationVal = TESSELATION/lod
@@ -64,7 +63,8 @@ export default function Island(params, center, biomeType, lod ) {
     
                 const distortScale = 0.1;
                 const distortStrength = 2;
-                const distortNoise = perlin3D.sample(x * distortScale, y * distortScale, 0);
+                
+                const distortNoise = perlin3D.sample(x * distortScale, y * distortScale, factor);
                 const distortedRadius =
                     params.radius + distortNoise * distortStrength;
                 const distFromCenter = Math.sqrt(x * x + y * y) / distortedRadius;
@@ -82,7 +82,7 @@ export default function Island(params, center, biomeType, lod ) {
                     const xs = x / params.scale;
                     const ys = y / params.scale;
                     const noiseVal =
-                        perlin3D.sample(xs * frequency, ys * frequency, 0) * 0.5 + 0.5;
+                        perlin3D.sample(xs * frequency, ys * frequency, factor) * 0.5 + 0.5;
                     total += noiseVal * amplitude;
                     normalization += amplitude;
                     amplitude *= G;

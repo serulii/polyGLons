@@ -26,7 +26,7 @@ export const BIOME_COLORS = {
 
 export const BIOME_PEAKS = {
     FOREST: [
-        { height: 6.0, variation: 0.8},
+        { height: 3.0, variation: 0.8},
     ],
     DESERT: [
         { height: 3.0, variation: 0.6},
@@ -42,5 +42,6 @@ export const BIOME_PEAKS = {
 const SCENE_DIMENSION = 100;
 const TESSELATION = 100;
 const FALLOFF_DISTANCE = 20;
+const SEED = 12803;
 
-export { SCENE_DIMENSION, TESSELATION, FALLOFF_DISTANCE };
+export { SCENE_DIMENSION, TESSELATION, FALLOFF_DISTANCE, SEED };
