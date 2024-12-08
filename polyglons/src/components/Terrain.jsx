@@ -46,7 +46,6 @@ export default function levelOfDetail({ params }) {
                 yTop: newIslands[i].y + newIslands[i].radius});
             tempBox.push(newIslands[i]);
         }
-
         setBoundingBoxes(tempBox);
 
     }, [params.numIslands, params.minRadius, params.maxRadius]);
@@ -82,18 +81,10 @@ export default function levelOfDetail({ params }) {
 
         if (changed){
             group.clear();
-            let tempBox = [];
             for(let i=0; i<islands.length; i++){
                 let curIsland = Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED);
                 group.add(curIsland);
-                tempBox.push({xLeft: islands[i].x - islands[i].radius, 
-                            xRight: islands[i].x + islands[i].radius, 
-                            yBottom: islands[i].y - islands[i].radius, 
-                            yTop: islands[i].y + islands[i].radius});
-                tempBox.push(islands[i]);
-            }
-            
-            setBoundingBoxes(tempBox);
+            } 
         }
     });
  
@@ -155,10 +146,10 @@ export default function levelOfDetail({ params }) {
 
     function getIsland(){
         for(let i=0; i < boundingBoxes.length; i+=2){
-            if(-camera.position.x >= boundingBoxes[i].xLeft - FALLOFF_DISTANCE &&
-                -camera.position.x <= boundingBoxes[i].xRight + FALLOFF_DISTANCE &&
-                camera.position.z >= boundingBoxes[i].yBottom - FALLOFF_DISTANCE &&
-                camera.position.z <= boundingBoxes[i].yTop + FALLOFF_DISTANCE
+            if(-camera.position.x >= boundingBoxes[i].xLeft &&
+                -camera.position.x <= boundingBoxes[i].xRight &&
+                camera.position.z >= boundingBoxes[i].yBottom &&
+                camera.position.z <= boundingBoxes[i].yTop
             ) {
                 return boundingBoxes[i+1];
             }
