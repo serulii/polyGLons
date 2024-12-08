@@ -1,7 +1,7 @@
 import './css/App.css';
 import './css/style.css';
 import React from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { FlyControls, PointerLockControls, FirstPersonControls } from '@react-three/drei';
 import { OrthographicCamera } from '@react-three/drei';
 import * as THREE from 'three';
@@ -36,18 +36,44 @@ import Controls from './components/Controls';
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
-function Rig({ ortho }) {
-    const {camera} = useThree();
-    if (ortho) {
-        camera.position.y = 20.0;
-        camera.position.x = -20.0;
-        camera.position.z = 20.0;
-        camera.projectionMatrix.makeOrthographic(-50, 50, 50, -50, -1000, 1000);
-        camera.lookAt(0.0, 10.0, 0.0);
-    } else {
-        const sampleCamera = new THREE.PerspectiveCamera();
-        camera.projectionMatrix.copy(sampleCamera.projectionMatrix);
-    }
+
+
+function Rig({ ortho, cameraAnimationStart, setCameraAnimationStart }) {
+    // state is the start time, have animation duration
+    const { camera } = useThree();
+
+    useFrame(() => {
+        const orthoMatrix = camera.projectionMatrix.clone().makeOrthographic(-50, 50, 50, -50, -1000, 1000);
+        const perspectiveMatrix = new THREE.PerspectiveCamera().projectionMatrix;
+        
+        let startMatrix, endMatrix;
+        if (ortho) {
+            endMatrix = orthoMatrix;
+            startMatrix = perspectiveMatrix;
+        } else {
+            endMatrix = perspectiveMatrix;
+            startMatrix = orthoMatrix;
+        }
+
+        const now = document.timeline.currentTime;
+        const duration = 1000.0;
+        let currentMatrix;
+        if (cameraAnimationStart && cameraAnimationStart <= now && now <= cameraAnimationStart + duration) {
+            currentMatrix = endMatrix;
+        } else {
+            currentMatrix = endMatrix;
+        }
+
+        if (ortho) {
+            camera.position.x = -20.0;
+            camera.position.y = 20.0;
+            camera.position.z = 20.0;
+            camera.projectionMatrix.copy(currentMatrix);
+            camera.lookAt(0.0, 10.0, 0.0);
+        } else {
+            camera.projectionMatrix.copy(currentMatrix);
+        }
+    });
 }
 
 function Scene() {
@@ -124,11 +150,13 @@ function Scene() {
 
     const [boundingBoxes, setBoundingBoxes] = useState([]);
    
+    const [cameraAnimationStart, setCameraAnimationStart] = useState();
+
     return (
         <>
             <Controls/>
             <Canvas>
-                <Rig ortho={gameView} />
+                <Rig ortho={gameView} cameraAnimationStart={cameraAnimationStart} setCameraAnimationStart={setCameraAnimationStart} />
                 <ambientLight intensity={0} />
                 <directionalLight intensity={1} />
                 <hemisphereLight
@@ -138,9 +166,9 @@ function Scene() {
                 </hemisphereLight>
                 <Terrain params={params} setBoundingBoxes={setBoundingBoxes} boundingBoxes={boundingBoxes}/>
                 <Water useOriginForTesselation={gameView} />
-                {!gameView && <Skybox />}
                 {!gameView && 
                     <>
+                        <Skybox />
                         <FirstPersonControls lookSpeed={0.2} />
                         <FlyControls autoForward={false} movementSpeed={2} />
                     </>
