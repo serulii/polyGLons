@@ -125,7 +125,6 @@ function Scene() {
     return (
         <>
             <Controls/>
-            <button className="button" onClick={() => setGameView(!gameView)}>Change View</button>
             <Canvas>
                 <Rig ortho={gameView} />
                 <ambientLight intensity={0} />

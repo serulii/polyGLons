@@ -10,6 +10,7 @@ export default function levelOfDetail({ params }) {
 
     const [islands, setIslands] = useState([]);
     const [islandCounter, setIslandCounter] = useState([]);
+    const [boundingBoxes, setBoundingBoxes] = useState([]);
 
     let  { camera } = useThree();
 
@@ -22,20 +23,31 @@ export default function levelOfDetail({ params }) {
 
     //initializes the islandCounter, 1 if in distance, 0 if not
     useEffect(() => {
+        const { x, y, z } = camera.position;
+
         const newIslands = generateIslands(params.numIslands, bounds, params.minRadius, params.maxRadius);
         setIslands(newIslands);
 
         const initializeCounter = newIslands.map(island => {
-            const euclideanDistance = Math.sqrt((-camera.position.x - island.x) ** 2 + (camera.position.y - island.y) ** 2);
+            const euclideanDistance = Math.sqrt((-x - island.x) ** 2 + (z - island.y) ** 2);
             return euclideanDistance <= FALLOFF_DISTANCE ? CLOSE_TESSELATION_DIVISOR : FAR_TESSELATION_DIVISOR;
         });
 
         setIslandCounter(initializeCounter);
 
         group.clear();
-        for(let i=0; i<islands.length; i++){
-            group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
+        let tempBox = [];
+        for(let i=0; i<newIslands.length; i++){
+            let curIsland = Island(params, {x: newIslands[i].x, y: newIslands[i].y}, newIslands[i].biome, initializeCounter[i], i+SEED);
+            group.add(curIsland);
+            tempBox.push({xLeft: newIslands[i].x - newIslands[i].radius, 
+                xRight: newIslands[i].x + newIslands[i].radius, 
+                yBottom: newIslands[i].y - newIslands[i].radius, 
+                yTop: newIslands[i].y + newIslands[i].radius});
+            tempBox.push(newIslands[i]);
         }
+
+        setBoundingBoxes(tempBox);
 
     }, [params.numIslands, params.minRadius, params.maxRadius]);
 
@@ -51,7 +63,7 @@ export default function levelOfDetail({ params }) {
         const { x, y, z } = camera.position;
         let changed = false;
 
-        if (x != prevPosition.current.x || y != prevPosition.current.y) {
+        if (x != prevPosition.current.x || z != prevPosition.current.z) {
             prevPosition.current = { x, y, z };
 
             const newCounter = islands.map(island => {
@@ -70,9 +82,18 @@ export default function levelOfDetail({ params }) {
 
         if (changed){
             group.clear();
+            let tempBox = [];
             for(let i=0; i<islands.length; i++){
-                group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
+                let curIsland = Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED);
+                group.add(curIsland);
+                tempBox.push({xLeft: islands[i].x - islands[i].radius, 
+                            xRight: islands[i].x + islands[i].radius, 
+                            yBottom: islands[i].y - islands[i].radius, 
+                            yTop: islands[i].y + islands[i].radius});
+                tempBox.push(islands[i]);
             }
+            
+            setBoundingBoxes(tempBox);
         }
     });
  
@@ -130,6 +151,18 @@ export default function levelOfDetail({ params }) {
             islands.push(newIsland);
         }
         return islands;
+    }
+
+    function getIsland(){
+        for(let i=0; i < boundingBoxes.length; i+=2){
+            if(-camera.position.x >= boundingBoxes[i].xLeft - FALLOFF_DISTANCE &&
+                -camera.position.x <= boundingBoxes[i].xRight + FALLOFF_DISTANCE &&
+                camera.position.z >= boundingBoxes[i].yBottom - FALLOFF_DISTANCE &&
+                camera.position.z <= boundingBoxes[i].yTop + FALLOFF_DISTANCE
+            ) {
+                return boundingBoxes[i+1];
+            }
+        }
     }
 }
 
