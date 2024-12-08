@@ -2,14 +2,14 @@ import * as THREE from 'three';
 
 export const BIOME_COLORS = {
     FOREST: [
-        { height: 0.0, color: new THREE.Color(0.2, 0.5, 0.7) },
+        { height: 0.0, color: new THREE.Color(0.2, 0.5, 0.1) },
         { height: 0.5, color: new THREE.Color(1.0, 1.0, 0.4) },
         { height: 1.5, color: new THREE.Color(0.2, 0.5, 0.1) },
         { height: 2.0, color: new THREE.Color(0.6, 0.8, 0.4) },
         { height: 3.0, color: new THREE.Color(1.0, 1.0, 1.0) },
     ],
     DESERT: [
-        { height: 0.0, color: new THREE.Color(0.8, 0.345, 0.212) },
+        { height: 0.0, color: new THREE.Color(0.961, 0.663, 0.157) },
         { height: 0.5, color: new THREE.Color(0.922, 0.51, 0.059) },
         { height: 1.5, color: new THREE.Color(0.961, 0.663, 0.157) },
         { height: 2.0, color: new THREE.Color(1, 0.788, 0.349) },
@@ -41,5 +41,6 @@ export const BIOME_PEAKS = {
 
 const SCENE_DIMENSION = 100;
 const TESSELATION = 100;
+const FALLOFF_DISTANCE = 20;
 
-export { SCENE_DIMENSION, TESSELATION };
+export { SCENE_DIMENSION, TESSELATION, FALLOFF_DISTANCE };

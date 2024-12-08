@@ -51,7 +51,7 @@ function Rig({ ortho }) {
 }
 
 function Scene() {
-    const [gameView, setGameView] = useState(true);
+    const [gameView, setGameView] = useState(false);
     const [params, setParams] = useState({
         scale: 10,
         octaves: 8,
@@ -59,7 +59,10 @@ function Scene() {
         persistence: 1.0,
         exponentiation: 3.0,
         height: 5.5,
-        radius: 20,
+        minRadius: 10,
+        maxRadius: 12,
+        numIslands: 5,
+        radius: 10,
     });
 
     useEffect(() => {
@@ -98,11 +101,23 @@ function Scene() {
                 setParams((prev) => ({ ...prev, height: value }))
             );
 
-        gui.add(params, 'radius', 0, 100)
-            .name('Radius')
+        gui.add(params, 'minRadius', 0, 100)
+            .name('minRadius')
             .onChange((value) =>
-                setParams((prev) => ({ ...prev, radius: value }))
+                setParams((prev) => ({ ...prev, minRadius: value }))
             );
+
+        gui.add(params, 'maxRadius', 0, 100)
+        .name('maxRadius')
+        .onChange((value) =>
+            setParams((prev) => ({ ...prev, maxRadius: value }))
+        );
+
+        gui.add(params, 'numIslands', 0, 100)
+        .name('numIslands')
+        .onChange((value) =>
+            setParams((prev) => ({ ...prev, numIslands: value }))
+        );
 
         return () => gui.destroy();
     }, [params]);
