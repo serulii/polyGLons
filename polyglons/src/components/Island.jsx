@@ -3,6 +3,7 @@ import { useThree } from '@react-three/fiber';
 import { createNoise2D } from 'simplex-noise';
 import { useRef, useEffect } from 'react';
 import { BIOME_COLORS, BIOME_PEAKS, TESSELATION } from '../utils/constants';
+import { Perlin3d } from '../polyglons-wasm/polyglons_wasm';
 
 function getColor(height, biomeType) {
     const colors = BIOME_COLORS[biomeType]
@@ -50,7 +51,7 @@ export default function Island(params, center, biomeType, lod ) {
         const terrain = new THREE.Mesh(nonIndexedGeometry, material);
         terrain.rotation.x = -Math.PI / 2;
     
-        const noise2D = createNoise2D();
+        const perlin3D = new Perlin3d();
         const positions = nonIndexedGeometry.attributes.position.array;
     
         const colors = [];
@@ -63,7 +64,7 @@ export default function Island(params, center, biomeType, lod ) {
     
                 const distortScale = 0.1;
                 const distortStrength = 2;
-                const distortNoise = noise2D(x * distortScale, y * distortScale);
+                const distortNoise = perlin3D.sample(x * distortScale, y * distortScale, 0);
                 const distortedRadius =
                     params.radius + distortNoise * distortStrength;
                 const distFromCenter = Math.sqrt(x * x + y * y) / distortedRadius;
@@ -81,7 +82,7 @@ export default function Island(params, center, biomeType, lod ) {
                     const xs = x / params.scale;
                     const ys = y / params.scale;
                     const noiseVal =
-                        noise2D(xs * frequency, ys * frequency) * 0.5 + 0.5;
+                        perlin3D.sample(xs * frequency, ys * frequency, 0) * 0.5 + 0.5;
                     total += noiseVal * amplitude;
                     normalization += amplitude;
                     amplitude *= G;
