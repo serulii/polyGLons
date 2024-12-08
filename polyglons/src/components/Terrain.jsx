@@ -2,7 +2,7 @@ import { useThree, useFrame } from '@react-three/fiber';
 import Island from './Island';
 import * as THREE from 'three';
 import { useState, useEffect, useRef } from 'react';
-import { SCENE_DIMENSION, FALLOFF_DISTANCE, SEED } from '../utils/constants';
+import { SCENE_DIMENSION, FALLOFF_DISTANCE, SEED, CLOSE_TESSELATION_DIVISOR, FAR_TESSELATION_DIVISOR } from '../utils/constants';
 import { BIOME_COLORS } from '../utils/constants';
 
 export default function levelOfDetail({ params }) {
@@ -27,7 +27,7 @@ export default function levelOfDetail({ params }) {
 
         const initializeCounter = newIslands.map(island => {
             const euclideanDistance = Math.sqrt((-camera.position.x - island.x) ** 2 + (camera.position.y - island.y) ** 2);
-            return euclideanDistance <= FALLOFF_DISTANCE ? 1 : 5;
+            return euclideanDistance <= FALLOFF_DISTANCE ? CLOSE_TESSELATION_DIVISOR : FAR_TESSELATION_DIVISOR;
         });
 
         setIslandCounter(initializeCounter);
@@ -59,7 +59,7 @@ export default function levelOfDetail({ params }) {
 
             const newCounter = islands.map(island => {
                 const euclideanDistance = Math.sqrt((-x - island.x) ** 2 + (z - island.y) ** 2);
-                return euclideanDistance <= FALLOFF_DISTANCE ? 1 : 5;
+                return euclideanDistance <= FALLOFF_DISTANCE ? CLOSE_TESSELATION_DIVISOR : FAR_TESSELATION_DIVISOR;
             });
 
             for(let i=0; i<islandCounter.length; i++){
