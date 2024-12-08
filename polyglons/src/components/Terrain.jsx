@@ -37,11 +37,8 @@ export default function levelOfDetail({ params }) {
             group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
         }
 
-        
-
     }, [params.numIslands, params.minRadius, params.maxRadius]);
 
-    group.clear();
     for(let i=0; i<islands.length; i++){
         group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
     }
@@ -70,6 +67,7 @@ export default function levelOfDetail({ params }) {
                 }
             }
         }
+
         if (changed){
             group.clear();
             for(let i=0; i<islands.length; i++){
