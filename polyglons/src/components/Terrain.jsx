@@ -26,13 +26,25 @@ export default function levelOfDetail({ params }) {
         setIslands(newIslands);
 
         const initializeCounter = newIslands.map(island => {
-            const euclideanDistance = Math.sqrt((camera.position.x - island.x) ** 2 + (camera.position.y - island.y) ** 2);
+            const euclideanDistance = Math.sqrt((-camera.position.x - island.x) ** 2 + (camera.position.y - island.y) ** 2);
             return euclideanDistance <= FALLOFF_DISTANCE ? 1 : 5;
         });
 
         setIslandCounter(initializeCounter);
+
+        group.clear();
+        for(let i=0; i<islands.length; i++){
+            group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
+        }
+
+        
+
     }, [params.numIslands, params.minRadius, params.maxRadius]);
 
+    group.clear();
+    for(let i=0; i<islands.length; i++){
+        group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
+    }
 
     //useRef to prevent rerendering on change
     const prevPosition = useRef({ x: camera.position.x, y: camera.position.y });
@@ -40,6 +52,7 @@ export default function levelOfDetail({ params }) {
     useFrame(() => {
 
         const { x, y, z } = camera.position;
+        let changed = false;
 
         if (x != prevPosition.current.x || y != prevPosition.current.y) {
             prevPosition.current = { x, y, z };
@@ -51,14 +64,17 @@ export default function levelOfDetail({ params }) {
 
             for(let i=0; i<islandCounter.length; i++){
                 if(newCounter[i] != islandCounter[i]){
+                    changed = true;
                     setIslandCounter(newCounter);
                     break;
                 }
             }
         }
-        group.clear();
-        for(let i=0; i<islands.length; i++){
-            group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
+        if (changed){
+            group.clear();
+            for(let i=0; i<islands.length; i++){
+                group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
+            }
         }
     });
  
