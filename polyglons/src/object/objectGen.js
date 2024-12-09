@@ -3,24 +3,18 @@ import { DENSITY } from '../utils/constants';
 import seedrandom from 'seedrandom';
 
 // model loading helper
-const loader = new GLTFLoader()
+const loader = new GLTFLoader();
 export async function loadModel(path) {
-	return new Promise((resolve, reject) => {
-		loader.load(path, data => resolve(data), null, reject)
-	})
+    return new Promise((resolve, reject) => {
+        loader.load(path, (data) => resolve(data), null, reject);
+    });
 }
 
 // load models for different biome types
 const models = {
-    FOREST: [
-        await loadModel('/models/tree.glb'),
-    ],
-    DESERT: [
-        await loadModel('/models/cactus1.glb'),
-    ],
-    SNOWY: [
-        await loadModel('/models/i_love_graphics.glb'),
-    ],
+    FOREST: [await loadModel('/models/tree.glb')],
+    DESERT: [await loadModel('/models/cactus1.glb')],
+    SNOWY: [await loadModel('/models/i_love_graphics.glb')],
 };
 
 export function generateObj(pos, biomeType, seed) {

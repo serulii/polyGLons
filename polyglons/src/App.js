@@ -2,14 +2,18 @@ import './css/App.css';
 import './css/style.css';
 import React from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { FlyControls, PointerLockControls, FirstPersonControls } from '@react-three/drei';
+import {
+    FlyControls,
+    PointerLockControls,
+    FirstPersonControls,
+} from '@react-three/drei';
 import * as THREE from 'three';
 import { useEffect, useState } from 'react';
 import Skybox from './components/Skybox';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import BoatControls from './components/Boat.jsx';
 import Water from './components/Water';
-import Rig, {  } from './components/Rig'
+import Rig from './components/Rig';
 
 import * as dat from 'dat.gui';
 import Terrain from './components/Terrain';
@@ -100,7 +104,9 @@ function Scene() {
         return () => gui.destroy();
     }, [params]);
 
-    const [orthoReturnPosition, setOrthoReturnPosition] = useState(new THREE.Vector3(20.0, 1.0, -20.0));
+    const [orthoReturnPosition, setOrthoReturnPosition] = useState(
+        new THREE.Vector3(20.0, 1.0, -20.0)
+    );
     const [boundingBoxes, setBoundingBoxes] = useState([]);
     const [ortho, setOrtho] = useState(false);
     const [cameraAnimationState, setCameraAnimationState] = useState();
@@ -109,9 +115,9 @@ function Scene() {
         <>
             <Controls />
             <Canvas>
-                <Rig 
-                    ortho={ortho} 
-                    cameraAnimationState={cameraAnimationState} 
+                <Rig
+                    ortho={ortho}
+                    cameraAnimationState={cameraAnimationState}
                     setCameraAnimationState={setCameraAnimationState}
                     boundingBoxes={boundingBoxes}
                     orthoReturnPosition={orthoReturnPosition}
@@ -121,12 +127,16 @@ function Scene() {
                 <hemisphereLight
                     intensity={1}
                     groundColor={'ffd466'}
-                    skyColor={'170fff'}>
-                </hemisphereLight>
-                <Terrain params={params} setBoundingBoxes={setBoundingBoxes} boundingBoxes={boundingBoxes}/>
+                    skyColor={'170fff'}
+                ></hemisphereLight>
+                <Terrain
+                    params={params}
+                    setBoundingBoxes={setBoundingBoxes}
+                    boundingBoxes={boundingBoxes}
+                />
                 <Water />
                 {<Skybox cameraAnimationState={cameraAnimationState} />}
-                {!ortho && 
+                {!ortho && (
                     <>
                         <FirstPersonControls makeDefault lookSpeed={0.2} />
                         <FlyControls autoForward={false} movementSpeed={2} />
