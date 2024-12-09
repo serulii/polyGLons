@@ -5,7 +5,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 export default function BoatControls() {
     const { scene } = useThree();
     generateBoat(scene);
-    return <></>;
+    return;
 }
 
 function generateBoat(scene) {

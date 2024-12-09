@@ -1,9 +1,17 @@
 module.exports = {
     ignorePatterns: ['src/polylons-wasm/*'],
     env: {
-        "es6": true,
+        es6: true,
+        browser: true,
     },
+    parser: '@babel/eslint-parser',
     parserOptions: {
-        "sourceType": "module"
+        requireConfigFile: false,
+        ecmaVersion: 2021,
+        sourceType: 'module',
+        ecmaFeatures: {
+            jsx: true,
+        },
     },
+    plugins: ['react'],
 };

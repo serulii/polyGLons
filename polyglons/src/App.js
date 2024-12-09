@@ -1,27 +1,15 @@
 import './css/App.css';
 import './css/style.css';
 import React from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
-import {
-    FlyControls,
-    PointerLockControls,
-    FirstPersonControls,
-} from '@react-three/drei';
-import { OrthographicCamera } from '@react-three/drei';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { FlyControls, PointerLockControls, FirstPersonControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useEffect, useState } from 'react';
-import { useLoader } from '@react-three/fiber';
-import BoatControls from './components/Boat.jsx';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import { generateObjects } from './components/objectGen';
-import Skybox from './components/skybox';
+import Skybox from './components/Skybox';
 import initWasm from './polyglons-wasm/polyglons_wasm';
+import BoatControls from './components/Boat.jsx';
 import Water from './components/Water';
-import AudioPlayer from './components/audio';
-
-// import CustomCamera from './components/CustomCamera'
-
-// import { FirstPersonCamera } from './components/CustomCamera';
+import Rig, {  } from './components/Rig'
 
 import * as dat from 'dat.gui';
 import Terrain from './components/Terrain';
@@ -41,23 +29,7 @@ import Controls from './components/Controls';
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
-function Rig({ ortho }) {
-    const { camera } = useThree();
-    if (ortho) {
-        camera.position.y = 20.0;
-        camera.position.x = -20.0;
-        camera.position.z = 20.0;
-        camera.projectionMatrix.makeOrthographic(-50, 50, 50, -50, -1000, 1000);
-        camera.lookAt(0.0, 10.0, 0.0);
-    } else {
-        const sampleCamera = new THREE.PerspectiveCamera();
-        camera.projectionMatrix.copy(sampleCamera.projectionMatrix);
-    }
-    // camera.fov = 60;
-}
-
 function Scene() {
-    const [gameView, setGameView] = useState(false);
     const [params, setParams] = useState({
         scale: 10,
         octaves: 8,
@@ -128,29 +100,41 @@ function Scene() {
         return () => gui.destroy();
     }, [params]);
 
+    const [orthoReturnPosition, setOrthoReturnPosition] = useState(new THREE.Vector3(20.0, 1.0, -20.0));
+    const [boundingBoxes, setBoundingBoxes] = useState([]);
+    const [ortho, setOrtho] = useState(false);
+    const [cameraAnimationState, setCameraAnimationState] = useState();
+
     return (
         <>
             <Controls />
             <Canvas>
-                <Rig ortho={gameView} />
+                <Rig 
+                    ortho={ortho} 
+                    cameraAnimationState={cameraAnimationState} 
+                    setCameraAnimationState={setCameraAnimationState}
+                    boundingBoxes={boundingBoxes}
+                    orthoReturnPosition={orthoReturnPosition}
+                />
                 <ambientLight intensity={0} />
                 <directionalLight intensity={1} />
                 <hemisphereLight
                     intensity={1}
                     groundColor={'ffd466'}
-                    skyColor={'170fff'}
-                ></hemisphereLight>
-                <Terrain params={params} />
-                <Water useOriginForTesselation={gameView} />
-                {!gameView && <Skybox /> && <BoatControls />}
-                {!gameView && (
+                    skyColor={'170fff'}>
+                </hemisphereLight>
+                <Terrain params={params} setBoundingBoxes={setBoundingBoxes} boundingBoxes={boundingBoxes}/>
+                <Water />
+                {<Skybox cameraAnimationState={cameraAnimationState} />}
+                {!ortho && 
                     <>
-                        <FirstPersonControls lookSpeed={0.2} />
+                        <FirstPersonControls makeDefault lookSpeed={0.2} />
                         <FlyControls autoForward={false} movementSpeed={2} />
+                        <BoatControls />
                     </>
                 )}
             </Canvas>
-            <button className="button" onClick={() => setGameView(!gameView)}>
+            <button className="button" onClick={() => setOrtho(!ortho)}>
                 Change View
             </button>
         </>
