@@ -60,7 +60,6 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
         const colors = [];
         // group to hold all objects on this island
         const objects = new THREE.Group();
-        objects.position.set(center.x, center.y, 0);
     
         for (let i = 0; i < positions.length; i += 9) {
             for (let j = i; j < i + 9; j += 3) {
@@ -72,10 +71,12 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
                 colors.push(...color, 1);
 
                 // add an object at random
-                const objSeed = `${seed},${x},${y}`;
-                const obj = generateObj({x: x, y: height, z: y}, biomeType, objSeed);
-                if (obj) {
-                    objects.add(obj);
+                if (height > BASE_HEIGHT) {
+                    const objSeed = `${seed},${x},${y}`;
+                    const obj = generateObj({x: x, y: height, z: y}, biomeType, objSeed);
+                    if (obj) {
+                        objects.add(obj);
+                    }
                 }
             }  
         }
@@ -94,7 +95,6 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
         });
         const terrain = new THREE.Mesh(geometry, material);
         return new THREE.Group().add(terrain, objects);    
-        // return terrain;
     }
 }
 
@@ -139,7 +139,6 @@ function calculateHeight(x, y, center, biomeType, params, factor, perlin3D){
     // add a base height for the island
     if (final > 0) {
         // change peaks based on biome
-
         final = modifyPeaks(final, biomeType);
         final += BASE_HEIGHT;
     }
