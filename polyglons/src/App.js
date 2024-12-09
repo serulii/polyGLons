@@ -2,11 +2,16 @@ import './css/App.css';
 import './css/style.css';
 import React from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { FlyControls, PointerLockControls, FirstPersonControls } from '@react-three/drei';
+import {
+    FlyControls,
+    PointerLockControls,
+    FirstPersonControls,
+} from '@react-three/drei';
 import { OrthographicCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import { useEffect, useState } from 'react';
 import { useLoader } from '@react-three/fiber';
+import BoatControls from './components/Boat.jsx';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { generateObjects } from './components/objectGen';
 import Skybox from './components/skybox';
@@ -37,7 +42,7 @@ import Controls from './components/Controls';
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
 function Rig({ ortho }) {
-    const {camera} = useThree();
+    const { camera } = useThree();
     if (ortho) {
         camera.position.y = 20.0;
         camera.position.x = -20.0;
@@ -48,6 +53,7 @@ function Rig({ ortho }) {
         const sampleCamera = new THREE.PerspectiveCamera();
         camera.projectionMatrix.copy(sampleCamera.projectionMatrix);
     }
+    // camera.fov = 60;
 }
 
 function Scene() {
@@ -108,23 +114,23 @@ function Scene() {
             );
 
         gui.add(params, 'maxRadius', 0, 100)
-        .name('maxRadius')
-        .onChange((value) =>
-            setParams((prev) => ({ ...prev, maxRadius: value }))
-        );
+            .name('maxRadius')
+            .onChange((value) =>
+                setParams((prev) => ({ ...prev, maxRadius: value }))
+            );
 
         gui.add(params, 'numIslands', 0, 100)
-        .name('numIslands')
-        .onChange((value) =>
-            setParams((prev) => ({ ...prev, numIslands: value }))
-        );
+            .name('numIslands')
+            .onChange((value) =>
+                setParams((prev) => ({ ...prev, numIslands: value }))
+            );
 
         return () => gui.destroy();
     }, [params]);
-   
+
     return (
         <>
-            <Controls/>
+            <Controls />
             <Canvas>
                 <Rig ortho={gameView} />
                 <ambientLight intensity={0} />
@@ -132,17 +138,17 @@ function Scene() {
                 <hemisphereLight
                     intensity={1}
                     groundColor={'ffd466'}
-                    skyColor={'170fff'}>
-                </hemisphereLight>
+                    skyColor={'170fff'}
+                ></hemisphereLight>
                 <Terrain params={params} />
                 <Water useOriginForTesselation={gameView} />
-                {!gameView && <Skybox />}
-                {!gameView && 
+                {!gameView && <Skybox /> && <BoatControls />}
+                {!gameView && (
                     <>
                         <FirstPersonControls lookSpeed={0.2} />
                         <FlyControls autoForward={false} movementSpeed={2} />
                     </>
-                }
+                )}
             </Canvas>
             <button className="button" onClick={() => setGameView(!gameView)}>
                 Change View
