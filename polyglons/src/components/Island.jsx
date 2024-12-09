@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import { BIOME_COLORS, BIOME_PEAKS, TESSELATION, SEED } from '../utils/constants';
+import { BIOME_COLORS, BIOME_PEAKS, TESSELATION, BASE_HEIGHT } from '../utils/constants';
 import { getIsland } from './Terrain';
+import { generateObj } from './objectGen';
 
 function getColor(height, biomeType) {
     const colors = BIOME_COLORS[biomeType]
@@ -57,14 +58,25 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
         const geometry = getPlaneGeometry(center.x, center.y, params.maxRadius, tesselationVal);
         const positions = geometry.attributes.position.array;
         const colors = [];
+        // group to hold all objects on this island
+        const objects = new THREE.Group();
+        objects.position.set(center.x, center.y, 0);
     
         for (let i = 0; i < positions.length; i += 9) {
             for (let j = i; j < i + 9; j += 3) {
                 const x = positions[j];
                 const y = positions[j + 2];
-                positions[j + 1] = calculateHeight(x,y, center, biomeType,params,seed,perlin3D);
+                const height = calculateHeight(x, y, center, biomeType, params, seed, perlin3D);
+                positions[j + 1] = height;
                 const color = getColor(positions[i + 1], biomeType);
                 colors.push(...color, 1);
+
+                // add an object at random
+                const objSeed = `${seed},${x},${y}`;
+                const obj = generateObj({x: x, y: height, z: y}, biomeType, objSeed);
+                if (obj) {
+                    objects.add(obj);
+                }
             }  
         }
     
@@ -80,8 +92,9 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
             transparent: true,
             side: THREE.BackSide,
         });
-        const terrain = new THREE.Mesh(geometry, material);    
-        return terrain;
+        const terrain = new THREE.Mesh(geometry, material);
+        return new THREE.Group().add(terrain, objects);    
+        // return terrain;
     }
 }
 
@@ -117,8 +130,6 @@ function calculateHeight(x, y, center, biomeType, params, factor, perlin3D){
     }
 
     total /= normalization;
-
-    const baseHeight = 1;
     let final = Math.pow(total, params.exponentiation) * params.height;
 
     // apply taper if it's towards the edge
@@ -130,7 +141,7 @@ function calculateHeight(x, y, center, biomeType, params, factor, perlin3D){
         // change peaks based on biome
 
         final = modifyPeaks(final, biomeType);
-        final += baseHeight;
+        final += BASE_HEIGHT;
     }
     return final
 }
