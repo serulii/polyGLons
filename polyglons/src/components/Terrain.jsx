@@ -1,16 +1,16 @@
 import { useThree, useFrame } from '@react-three/fiber';
-import Island from './Island';
+import Island, { getHeight } from './Island';
 import * as THREE from 'three';
 import { useState, useEffect, useRef } from 'react';
 import { SCENE_DIMENSION, FALLOFF_DISTANCE, SEED, CLOSE_TESSELATION_DIVISOR, FAR_TESSELATION_DIVISOR } from '../utils/constants';
 import { BIOME_COLORS } from '../utils/constants';
+import { Perlin3d } from '../polyglons-wasm/polyglons_wasm';
 
-export default function levelOfDetail({ params }) {
+export default function levelOfDetail({ params, setBoundingBoxes, boundingBoxes }) {
     const group = new THREE.Group();
 
     const [islands, setIslands] = useState([]);
     const [islandCounter, setIslandCounter] = useState([]);
-    const [boundingBoxes, setBoundingBoxes] = useState([]);
 
     let  { camera } = useThree();
 
@@ -26,6 +26,7 @@ export default function levelOfDetail({ params }) {
         const { x, y, z } = camera.position;
 
         const newIslands = generateIslands(params.numIslands, bounds, params.minRadius, params.maxRadius);
+ 
         setIslands(newIslands);
 
         const initializeCounter = newIslands.map(island => {
@@ -38,7 +39,7 @@ export default function levelOfDetail({ params }) {
         group.clear();
         let tempBox = [];
         for(let i=0; i<newIslands.length; i++){
-            let curIsland = Island(params, {x: newIslands[i].x, y: newIslands[i].y}, newIslands[i].biome, initializeCounter[i], i+SEED);
+            let curIsland = Island(params, {x: newIslands[i].x, y: newIslands[i].y}, newIslands[i].biome, initializeCounter[i], newIslands[i].perlin3D, newIslands[i].seed);
             group.add(curIsland);
             tempBox.push({xLeft: newIslands[i].x - newIslands[i].radius, 
                 xRight: newIslands[i].x + newIslands[i].radius, 
@@ -47,11 +48,10 @@ export default function levelOfDetail({ params }) {
             tempBox.push(newIslands[i]);
         }
         setBoundingBoxes(tempBox);
-
     }, [params.numIslands, params.minRadius, params.maxRadius]);
-
+    
     for(let i=0; i<islands.length; i++){
-        group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED));
+        group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], islands[i].perlin3D, islands[i].seed));
     }
 
     //useRef to prevent rerendering on change
@@ -82,10 +82,12 @@ export default function levelOfDetail({ params }) {
         if (changed){
             group.clear();
             for(let i=0; i<islands.length; i++){
-                let curIsland = Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], i+SEED);
+                let curIsland = Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], islands[i].perlin3D, islands[i].seed);
                 group.add(curIsland);
             } 
         }
+        getHeight(camera.position.x, camera.position.z, boundingBoxes);
+
     });
  
     return <primitive object={group} />;
@@ -133,7 +135,9 @@ export default function levelOfDetail({ params }) {
                         return keys[(keys.length * Math.random()) << 0];
                     };
                     var biome = randomBiome(BIOME_COLORS).toString();
-                    newIsland = { x, y, radius, biome };
+                    const perlin3D = new Perlin3d();
+                    const seed = (i+SEED) * SEED; 
+                    newIsland = { x, y, radius, biome, perlin3D, seed, params };
                     usedCells.add(cellKey);
                     foundCell = true;
                 }
@@ -143,16 +147,16 @@ export default function levelOfDetail({ params }) {
         }
         return islands;
     }
+}
 
-    function getIsland(){
-        for(let i=0; i < boundingBoxes.length; i+=2){
-            if(-camera.position.x >= boundingBoxes[i].xLeft &&
-                -camera.position.x <= boundingBoxes[i].xRight &&
-                camera.position.z >= boundingBoxes[i].yBottom &&
-                camera.position.z <= boundingBoxes[i].yTop
-            ) {
-                return boundingBoxes[i+1];
-            }
+export function getIsland(x,z,boundingBoxes){
+    for(let i=0; i < boundingBoxes.length; i+=2){
+        if(-x >= boundingBoxes[i].xLeft &&
+            -x <= boundingBoxes[i].xRight &&
+            z >= boundingBoxes[i].yBottom &&
+            z <= boundingBoxes[i].yTop
+        ) {
+            return boundingBoxes[i+1];
         }
     }
 }

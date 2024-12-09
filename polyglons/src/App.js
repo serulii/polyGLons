@@ -121,6 +121,8 @@ function Scene() {
 
         return () => gui.destroy();
     }, [params]);
+
+    const [boundingBoxes, setBoundingBoxes] = useState([]);
    
     return (
         <>
@@ -134,7 +136,7 @@ function Scene() {
                     groundColor={'ffd466'}
                     skyColor={'170fff'}>
                 </hemisphereLight>
-                <Terrain params={params} />
+                <Terrain params={params} setBoundingBoxes={setBoundingBoxes} boundingBoxes={boundingBoxes}/>
                 <Water useOriginForTesselation={gameView} />
                 {!gameView && <Skybox />}
                 {!gameView && 
