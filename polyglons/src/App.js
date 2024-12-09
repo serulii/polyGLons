@@ -3,16 +3,11 @@ import './css/style.css';
 import React from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { FlyControls, PointerLockControls, FirstPersonControls } from '@react-three/drei';
-import { OrthographicCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import { useEffect, useState } from 'react';
-import { useLoader } from '@react-three/fiber';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import { generateObjects } from './components/objectGen';
-import Skybox from './components/skybox';
+import Skybox from './components/Skybox';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import Water from './components/Water';
-import AudioPlayer from './components/audio';
 import Rig, {  } from './components/Rig'
 
 import * as dat from 'dat.gui';

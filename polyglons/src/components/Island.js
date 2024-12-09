@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { BIOME_COLORS, BIOME_PEAKS, TESSELATION, BASE_HEIGHT } from '../utils/constants';
 import { getIsland } from './Terrain';
-import { generateObj } from './objectGen';
+import { generateObj } from '../object/objectGen';
 
 function getColor(height, biomeType) {
     const colors = BIOME_COLORS[biomeType]
@@ -71,9 +71,6 @@ function getIslandObjects(center, radius, resolution, biomeType, seed, params, p
 }
 
 export default function Island(params, center, biomeType, lod, perlin3D, seed) {
-    const newTerrain = createTerrain();
-    return newTerrain
-
     function createTerrain() {
         let tesselationVal = TESSELATION/lod
         const geometry = getPlaneGeometry(center.x, center.y, params.maxRadius, tesselationVal);
@@ -108,6 +105,9 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
 
         return new THREE.Group().add(terrain, objects);    
     }
+
+    const newTerrain = createTerrain();
+    return newTerrain
 }
 
 function calculateHeight(x, y, center, biomeType, params, factor, perlin3D){

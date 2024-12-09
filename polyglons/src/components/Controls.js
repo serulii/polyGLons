@@ -1,4 +1,4 @@
-import AudioPlayer from "./audio";
+import AudioPlayer from "./Audio";
 
 export default function Controls() {
     return (

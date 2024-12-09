@@ -6,7 +6,19 @@ import { SCENE_DIMENSION, FALLOFF_DISTANCE, SEED, CLOSE_TESSELATION_DIVISOR, FAR
 import { BIOME_COLORS } from '../utils/constants';
 import { Perlin3d } from '../polyglons-wasm/polyglons_wasm';
 
-export default function levelOfDetail({ params, setBoundingBoxes, boundingBoxes }) {
+export function getIsland(x,z,boundingBoxes){
+    for(let i=0; i < boundingBoxes.length; i+=2){
+        if(x >= boundingBoxes[i].xLeft &&
+            x <= boundingBoxes[i].xRight &&
+            z >= boundingBoxes[i].yBottom &&
+            z <= boundingBoxes[i].yTop
+        ) {
+            return boundingBoxes[i+1];
+        }
+    }
+}
+
+export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
     const group = new THREE.Group();
 
     const [islands, setIslands] = useState([]);
@@ -54,7 +66,7 @@ export default function levelOfDetail({ params, setBoundingBoxes, boundingBoxes 
         group.add(Island(params, {x: islands[i].x, y: islands[i].y}, islands[i].biome, islandCounter[i], islands[i].perlin3D, islands[i].seed));
     }
 
-    //useRef to prevent rerendering on change
+    // useRef to prevent rerendering on change
     const prevPosition = useRef({ x: camera.position.x, y: camera.position.y });
 
     useFrame(() => {
@@ -89,8 +101,6 @@ export default function levelOfDetail({ params, setBoundingBoxes, boundingBoxes 
         getHeight(camera.position.x, camera.position.z, boundingBoxes);
 
     });
- 
-    return <primitive object={group} />;
     
     function generateIslands(numIslands, bounds, minRadius, maxRadius) {
         const islands = [];
@@ -147,20 +157,6 @@ export default function levelOfDetail({ params, setBoundingBoxes, boundingBoxes 
         }
         return islands;
     }
+
+    return <primitive object={group} />;
 }
-
-export function getIsland(x,z,boundingBoxes){
-    for(let i=0; i < boundingBoxes.length; i+=2){
-        if(x >= boundingBoxes[i].xLeft &&
-            x <= boundingBoxes[i].xRight &&
-            z >= boundingBoxes[i].yBottom &&
-            z <= boundingBoxes[i].yTop
-        ) {
-            return boundingBoxes[i+1];
-        }
-    }
-}
-
-
-
-    

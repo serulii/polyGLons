@@ -1,6 +1,14 @@
-import { loadModel } from '../utils/utils';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 import { DENSITY } from '../utils/constants';
 import seedrandom from 'seedrandom';
+
+// model loading helper
+const loader = new GLTFLoader()
+export async function loadModel(path) {
+	return new Promise((resolve, reject) => {
+		loader.load(path, data => resolve(data), null, reject)
+	})
+}
 
 // load models for different biome types
 const models = {
