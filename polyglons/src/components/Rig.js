@@ -1,6 +1,8 @@
 import { useThree, useFrame, Camera } from '@react-three/fiber';
 import * as THREE from 'three';
 import { getHeight } from './Island';
+import { useEffect, useState} from 'react';
+
 
 /**
  * @typedef {Object} AnimationState
@@ -127,26 +129,38 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
         state = cameraAnimationState;
     }
 
+    const [animationComplete, setAnimationComplete] = useState(false);
+
     useFrame(() => {
         camera.position.y = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
-
         const progress = (document.timeline.currentTime - state.animationStart) / animationDuration;
-        if (0 <= progress && progress <= 1.0) {
-            const curve = ortho 
-                ? Math.sqrt(1 - Math.pow(progress - 1, 2))  
-                : 1 - Math.sqrt(1 - Math.pow(progress, 2));
+        
+        if (0 <= progress) {
+            if (progress <= 1.0) {
+                const curve = ortho 
+                    ? Math.sqrt(1 - Math.pow(progress - 1, 2))  
+                    : 1 - Math.sqrt(1 - Math.pow(progress, 2));
 
-            camera.position.copy(
-                lerpVector(progress, state.start.position, state.end.position));
+                camera.position.copy(
+                    lerpVector(progress, state.start.position, state.end.position));
 
-            camera.quaternion.slerpQuaternions(
-                state.start.quaternion, state.end.quaternion, progress);
+                camera.quaternion.slerpQuaternions(
+                    state.start.quaternion, state.end.quaternion, progress);
 
-            camera.projectionMatrix.copy(
-                lerpMatrix(curve, state.start.projectionMatrix, state.end.projectionMatrix));
+                camera.projectionMatrix.copy(
+                    lerpMatrix(curve, state.start.projectionMatrix, state.end.projectionMatrix));
+            
+            } else if (!animationComplete) {
+                camera.position.copy(state.end.position);
+                camera.quaternion.copy(state.end.quaternion);
+                camera.projectionMatrix.copy(state.end.projectionMatrix);
+                setAnimationComplete(true);
+            }
         }
-
-
     });
+
+    useEffect(() => {
+        setAnimationComplete(false);
+    }, [ortho]);
 }
 
