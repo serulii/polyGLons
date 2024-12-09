@@ -128,11 +128,11 @@ function Scene() {
                     skyColor={'170fff'}>
                 </hemisphereLight>
                 <Terrain params={params} setBoundingBoxes={setBoundingBoxes} boundingBoxes={boundingBoxes}/>
-                <Water useOriginForTesselation={ortho} />
+                <Water />
                 {<Skybox cameraAnimationState={cameraAnimationState} />}
                 {!ortho && 
                     <>
-                        <FirstPersonControls lookSpeed={0.2} />
+                        <FirstPersonControls makeDefault lookSpeed={0.2} />
                         <FlyControls autoForward={false} movementSpeed={2} />
                     </>
                 }

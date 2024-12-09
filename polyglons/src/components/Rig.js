@@ -84,9 +84,9 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
         cam.lookAt(0.0, 5.0, 0.0);
         cam.projectionMatrix.makeOrthographic(-50, 50, 50, -50, -1000, 1000);
         end = {
-            quaternion: cam.quaternion,
-            position: cam.position,
-            projectionMatrix: cam.projectionMatrix,
+            quaternion: cam.quaternion.clone(),
+            position: cam.position.clone(),
+            projectionMatrix: cam.projectionMatrix.clone(),
         };
     } else {
         const projectionMatrix = (new THREE.PerspectiveCamera()).projectionMatrix;
@@ -94,8 +94,8 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
         cam.position.copy(orthoReturnPosition);
         cam.lookAt(0.0, 5.0, 0.0);
         end = {
-            quaternion: cam.quaternion,
-            position: cam.position,
+            quaternion: cam.quaternion.clone(),
+            position: cam.position.clone(),
             projectionMatrix,
         };
     }
@@ -116,7 +116,7 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
   * @param {THREE.Vector3} param0.orthoReturnPosition
  */
 export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState, boundingBoxes, orthoReturnPosition }) {
-    const { camera } = useThree();
+    const { camera, controls } = useThree();
 
     let state;
     if (!cameraAnimationState) {
@@ -132,7 +132,9 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
     const [animationComplete, setAnimationComplete] = useState(false);
 
     useFrame(() => {
-        camera.position.y = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+        if (!ortho) {
+            camera.position.y = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+        }
         const progress = (document.timeline.currentTime - state.animationStart) / animationDuration;
         
         if (0 <= progress) {
@@ -153,6 +155,9 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
             } else if (!animationComplete) {
                 camera.position.copy(state.end.position);
                 camera.quaternion.copy(state.end.quaternion);
+                if (controls) {
+                    controls.setOrientation();
+                }
                 camera.projectionMatrix.copy(state.end.projectionMatrix);
                 setAnimationComplete(true);
             }
