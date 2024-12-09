@@ -5,7 +5,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { FlyControls, PointerLockControls, FirstPersonControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useEffect, useState } from 'react';
-import Skybox from './components/skybox';
+import Skybox from './components/Skybox';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import Water from './components/Water';
 import Rig, {  } from './components/Rig'
