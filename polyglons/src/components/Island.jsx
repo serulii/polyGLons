@@ -48,18 +48,37 @@ function getPlaneGeometry(centerX, centerZ, radius, tesselationVal) {
     return geometry;
 }
 
+// generates objects for a given island
+// TODO: maybe cache heights so this isn't as expensive :(
+function getIslandObjects(center, radius, resolution, biomeType, seed, params, perlin3D) {
+    const objects = new THREE.Group();
+    const step = radius / resolution;
+
+    for (let x = center.x - radius; x <= center.x + radius; x += step) {
+        for (let y = center.y - radius; y <= center.y + radius; y += step) {
+            const height = calculateHeight(x, y, center, biomeType, params, seed, perlin3D);
+
+            if (height > BASE_HEIGHT) {
+                const objSeed = `${seed},${x},${y}`;
+                const obj = generateObj({ x, y: height, z: y }, biomeType, objSeed);
+                if (obj) {
+                    objects.add(obj);
+                }
+            }
+        }
+    }
+    return objects;
+}
+
 export default function Island(params, center, biomeType, lod, perlin3D, seed) {
     const newTerrain = createTerrain();
     return newTerrain
 
     function createTerrain() {
-        // TODO: make a maxRadius variable based on radius to set size of plane
         let tesselationVal = TESSELATION/lod
         const geometry = getPlaneGeometry(center.x, center.y, params.maxRadius, tesselationVal);
         const positions = geometry.attributes.position.array;
         const colors = [];
-        // group to hold all objects on this island
-        const objects = new THREE.Group();
     
         for (let i = 0; i < positions.length; i += 9) {
             for (let j = i; j < i + 9; j += 3) {
@@ -69,16 +88,7 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
                 positions[j + 1] = height;
                 const color = getColor(positions[i + 1], biomeType);
                 colors.push(...color, 1);
-
-                // add an object at random
-                if (height > BASE_HEIGHT) {
-                    const objSeed = `${seed},${x},${y}`;
-                    const obj = generateObj({x: x, y: height, z: y}, biomeType, objSeed);
-                    if (obj) {
-                        objects.add(obj);
-                    }
-                }
-            }  
+            } 
         }
     
         geometry.setAttribute(
@@ -94,6 +104,8 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
             side: THREE.BackSide,
         });
         const terrain = new THREE.Mesh(geometry, material);
+        const objects = getIslandObjects(center, params.maxRadius, 20, biomeType, seed, params, perlin3D);
+
         return new THREE.Group().add(terrain, objects);    
     }
 }
