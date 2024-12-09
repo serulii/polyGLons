@@ -13,10 +13,7 @@ import Skybox from './components/skybox';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import Water from './components/Water';
 import AudioPlayer from './components/audio';
-
-// import CustomCamera from './components/CustomCamera'
-
-// import { FirstPersonCamera } from './components/CustomCamera';
+import Rig, {  } from './components/Rig'
 
 import * as dat from 'dat.gui';
 import Terrain from './components/Terrain';
@@ -36,48 +33,7 @@ import Controls from './components/Controls';
 // music https://www.youtube.com/watch?v=T43D0M8kHFw
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
-
-
-function Rig({ ortho, cameraAnimationStart, setCameraAnimationStart }) {
-    // state is the start time, have animation duration
-    const { camera } = useThree();
-
-    useFrame(() => {
-        const orthoMatrix = camera.projectionMatrix.clone().makeOrthographic(-50, 50, 50, -50, -1000, 1000);
-        const perspectiveMatrix = new THREE.PerspectiveCamera().projectionMatrix;
-        
-        let startMatrix, endMatrix;
-        if (ortho) {
-            endMatrix = orthoMatrix;
-            startMatrix = perspectiveMatrix;
-        } else {
-            endMatrix = perspectiveMatrix;
-            startMatrix = orthoMatrix;
-        }
-
-        const now = document.timeline.currentTime;
-        const duration = 1000.0;
-        let currentMatrix;
-        if (cameraAnimationStart && cameraAnimationStart <= now && now <= cameraAnimationStart + duration) {
-            currentMatrix = endMatrix;
-        } else {
-            currentMatrix = endMatrix;
-        }
-
-        if (ortho) {
-            camera.position.x = -20.0;
-            camera.position.y = 20.0;
-            camera.position.z = 20.0;
-            camera.projectionMatrix.copy(currentMatrix);
-            camera.lookAt(0.0, 10.0, 0.0);
-        } else {
-            camera.projectionMatrix.copy(currentMatrix);
-        }
-    });
-}
-
 function Scene() {
-    const [gameView, setGameView] = useState(false);
     const [params, setParams] = useState({
         scale: 10,
         octaves: 8,
@@ -149,14 +105,18 @@ function Scene() {
     }, [params]);
 
     const [boundingBoxes, setBoundingBoxes] = useState([]);
-   
-    const [cameraAnimationStart, setCameraAnimationStart] = useState();
+    const [ortho, setOrtho] = useState(false);
+    const [cameraAnimationState, setCameraAnimationState] = useState();
 
     return (
         <>
             <Controls/>
             <Canvas>
-                <Rig ortho={gameView} cameraAnimationStart={cameraAnimationStart} setCameraAnimationStart={setCameraAnimationStart} />
+                <Rig 
+                    ortho={ortho} 
+                    cameraAnimationState={cameraAnimationState} 
+                    setCameraAnimationState={setCameraAnimationState}
+                />
                 <ambientLight intensity={0} />
                 <directionalLight intensity={1} />
                 <hemisphereLight
@@ -165,16 +125,16 @@ function Scene() {
                     skyColor={'170fff'}>
                 </hemisphereLight>
                 <Terrain params={params} setBoundingBoxes={setBoundingBoxes} boundingBoxes={boundingBoxes}/>
-                <Water useOriginForTesselation={gameView} />
-                {!gameView && 
+                <Water useOriginForTesselation={ortho} />
+                {<Skybox cameraAnimationState={cameraAnimationState} />}
+                {!ortho && 
                     <>
-                        <Skybox />
                         <FirstPersonControls lookSpeed={0.2} />
                         <FlyControls autoForward={false} movementSpeed={2} />
                     </>
                 }
             </Canvas>
-            <button className="button" onClick={() => setGameView(!gameView)}>
+            <button className="button" onClick={() => setOrtho(!ortho)}>
                 Change View
             </button>
         </>
