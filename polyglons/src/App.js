@@ -116,6 +116,7 @@ function Scene() {
                     ortho={ortho} 
                     cameraAnimationState={cameraAnimationState} 
                     setCameraAnimationState={setCameraAnimationState}
+                    boundingBoxes={boundingBoxes}
                 />
                 <ambientLight intensity={0} />
                 <directionalLight intensity={1} />

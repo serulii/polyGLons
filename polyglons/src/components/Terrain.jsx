@@ -30,7 +30,7 @@ export default function levelOfDetail({ params, setBoundingBoxes, boundingBoxes 
         setIslands(newIslands);
 
         const initializeCounter = newIslands.map(island => {
-            const euclideanDistance = Math.sqrt((-x - island.x) ** 2 + (z - island.y) ** 2);
+            const euclideanDistance = Math.sqrt((x - island.x) ** 2 + (z - island.y) ** 2);
             return euclideanDistance <= FALLOFF_DISTANCE ? CLOSE_TESSELATION_DIVISOR : FAR_TESSELATION_DIVISOR;
         });
 
@@ -66,7 +66,7 @@ export default function levelOfDetail({ params, setBoundingBoxes, boundingBoxes 
             prevPosition.current = { x, y, z };
 
             const newCounter = islands.map(island => {
-                const euclideanDistance = Math.sqrt((-x - island.x) ** 2 + (z - island.y) ** 2);
+                const euclideanDistance = Math.sqrt((x - island.x) ** 2 + (z - island.y) ** 2);
                 return euclideanDistance <= FALLOFF_DISTANCE ? CLOSE_TESSELATION_DIVISOR : FAR_TESSELATION_DIVISOR;
             });
 
@@ -151,8 +151,8 @@ export default function levelOfDetail({ params, setBoundingBoxes, boundingBoxes 
 
 export function getIsland(x,z,boundingBoxes){
     for(let i=0; i < boundingBoxes.length; i+=2){
-        if(-x >= boundingBoxes[i].xLeft &&
-            -x <= boundingBoxes[i].xRight &&
+        if(x >= boundingBoxes[i].xLeft &&
+            x <= boundingBoxes[i].xRight &&
             z >= boundingBoxes[i].yBottom &&
             z <= boundingBoxes[i].yTop
         ) {

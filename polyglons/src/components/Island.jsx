@@ -26,58 +26,66 @@ function modifyPeaks(height, biomeType) {
     return height * variations[variations.length - 1].variation;
 }
 
+function lerp(x, in_min, in_max, out_min, out_max) {
+    return out_min + (x - in_min) * (out_max - out_min) / (in_max - in_min);
+}
+
+function getPlaneGeometry(centerX, centerZ, radius, tesselationVal) {
+    const diameter = radius * 2;
+    let geometry = new THREE.PlaneGeometry(diameter, diameter, tesselationVal, tesselationVal);
+    geometry = geometry.toNonIndexed();
+    const positions = geometry.attributes.position.array;
+    for (let i = 0; i < positions.length; i += 3) {
+        const x = positions[i];
+        const z = positions[i+1];
+        const y = positions[i+2];
+        positions[i] = lerp(x, 0.0, diameter, centerX, centerX + diameter);
+        positions[i+1] = y;
+        positions[i+2] = lerp(z, 0.0, diameter, centerZ, centerZ + diameter);
+    }
+
+    return geometry;
+}
+
 export default function Island(params, center, biomeType, lod, perlin3D, seed) {
     const newTerrain = createTerrain();
     return newTerrain
 
     function createTerrain() {
-
         // TODO: make a maxRadius variable based on radius to set size of plane
         let tesselationVal = TESSELATION/lod
-
-        var geometry = new THREE.PlaneGeometry(params.maxRadius * 2, params.maxRadius * 2, tesselationVal, tesselationVal);
-        geometry.translate(-center.x, -center.y, 0);
-        var nonIndexedGeometry = geometry.toNonIndexed();
+        const geometry = getPlaneGeometry(center.x, center.y, params.maxRadius, tesselationVal);
+        const positions = geometry.attributes.position.array;
+        const colors = [];
     
+        for (let i = 0; i < positions.length; i += 9) {
+            for (let j = i; j < i + 9; j += 3) {
+                const x = positions[j];
+                const y = positions[j + 2];
+                positions[j + 1] = calculateHeight(x,y, center, biomeType,params,seed,perlin3D);
+                const color = getColor(positions[i + 1], biomeType);
+                colors.push(...color, 1);
+            }  
+        }
+    
+        geometry.setAttribute(
+            'color',
+            new THREE.Float32BufferAttribute(colors, 4)
+        );
+        geometry.attributes.position.needsUpdate = true;
         const material = new THREE.MeshLambertMaterial({
             vertexColors: true,
             wireframe: false,
             flatShading: true,
             transparent: true,
+            side: THREE.BackSide,
         });
-
-        const terrain = new THREE.Mesh(nonIndexedGeometry, material);
-        terrain.rotation.x = -Math.PI / 2;
-    
-        const positions = nonIndexedGeometry.attributes.position.array;
-    
-        const colors = [];
-    
-        for (let i = 0; i < positions.length; i += 9) {
-            for (let j = i; j < i + 9; j += 3) {
-                const x = positions[j] + center.x;
-                const y = positions[j + 1] + center.y;
-                
-                positions[j + 2] = calculateHeight(x,y,biomeType,params,seed,perlin3D);
-                let alpha = 1;
-    
-                const color = getColor(positions[i + 2], biomeType);
-                colors.push(...color.toArray());
-                colors.push(alpha);
-            }  
-        }
-    
-        nonIndexedGeometry.setAttribute(
-            'color',
-            new THREE.Float32BufferAttribute(colors, 4)
-        );
-        nonIndexedGeometry.attributes.position.needsUpdate = true;
-    
+        const terrain = new THREE.Mesh(geometry, material);    
         return terrain;
     }
 }
 
-function calculateHeight(x, y, biomeType, params, factor, perlin3D){
+function calculateHeight(x, y, center, biomeType, params, factor, perlin3D){
     const G = 2.0 ** -params.persistence;
 
     const distortScale = 0.1;
@@ -86,7 +94,7 @@ function calculateHeight(x, y, biomeType, params, factor, perlin3D){
     const distortNoise = perlin3D.sample(x * distortScale, y * distortScale, factor);
     const distortedRadius =
         params.radius + distortNoise * distortStrength;
-    const distFromCenter = Math.sqrt(x * x + y * y) / distortedRadius;
+    const distFromCenter = Math.hypot(x - center.x, y - center.y) / distortedRadius;
 
     // cubic taper for smoother transition :)
     let taper = 1 - Math.pow(distFromCenter, 3);
@@ -107,6 +115,7 @@ function calculateHeight(x, y, biomeType, params, factor, perlin3D){
         amplitude *= G;
         frequency *= params.lacunarity;
     }
+
     total /= normalization;
 
     const baseHeight = 1;
@@ -132,11 +141,12 @@ export function getHeight(x, y, boundingBoxes){
         return -100;
     }
 
+    const center = { x: island.x, y : island.y };
     let biomeType = island.biome;
     let params = island.params;
     let seed = island.seed;
     let perlin3D = island.perlin3D;
 
-    const final = calculateHeight(x,y,biomeType,params,seed,perlin3D);
+    const final = calculateHeight(x,y, center, biomeType,params,seed,perlin3D);
     return final;
 }

@@ -1,5 +1,6 @@
 import { useThree, useFrame, Camera } from '@react-three/fiber';
 import * as THREE from 'three';
+import { getHeight } from './Island';
 
 /**
  * @typedef {Object} AnimationState
@@ -107,8 +108,10 @@ function makeAnimationState(ortho, camera, appStart) {
  * @param {boolean} param0.ortho 
  * @param {AnimationStatePair} param0.cameraAnimationState 
  * @param {function} param0.setCameraAnimationState 
+  * @param {} param0.boundingBoxes 
+
  */
-export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState }) {
+export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState, boundingBoxes }) {
     const { camera } = useThree();
 
     let state;
@@ -123,6 +126,7 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
     }
 
     useFrame(() => {
+        camera.position.y = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
         const progress = (document.timeline.currentTime - state.animationStart) / animationDuration;
         if (0 <= progress && progress <= 1.0) {
             const curve = ortho 
