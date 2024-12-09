@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import { BIOME_COLORS, BIOME_PEAKS, TESSELATION, SEED } from '../utils/constants';
+import { BIOME_COLORS, BIOME_PEAKS, TESSELATION, BASE_HEIGHT } from '../utils/constants';
 import { getIsland } from './Terrain';
+import { generateObj } from './objectGen';
 
 function getColor(height, biomeType) {
     const colors = BIOME_COLORS[biomeType]
@@ -47,12 +48,33 @@ function getPlaneGeometry(centerX, centerZ, radius, tesselationVal) {
     return geometry;
 }
 
+// generates objects for a given island
+// TODO: maybe cache heights so this isn't as expensive :(
+function getIslandObjects(center, radius, resolution, biomeType, seed, params, perlin3D) {
+    const objects = new THREE.Group();
+    const step = radius / resolution;
+
+    for (let x = center.x - radius; x <= center.x + radius; x += step) {
+        for (let y = center.y - radius; y <= center.y + radius; y += step) {
+            const height = calculateHeight(x, y, center, biomeType, params, seed, perlin3D);
+
+            if (height > BASE_HEIGHT) {
+                const objSeed = `${seed},${x},${y}`;
+                const obj = generateObj({ x, y: height, z: y }, biomeType, objSeed);
+                if (obj) {
+                    objects.add(obj);
+                }
+            }
+        }
+    }
+    return objects;
+}
+
 export default function Island(params, center, biomeType, lod, perlin3D, seed) {
     const newTerrain = createTerrain();
     return newTerrain
 
     function createTerrain() {
-        // TODO: make a maxRadius variable based on radius to set size of plane
         let tesselationVal = TESSELATION/lod
         const geometry = getPlaneGeometry(center.x, center.y, params.maxRadius, tesselationVal);
         const positions = geometry.attributes.position.array;
@@ -62,10 +84,11 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
             for (let j = i; j < i + 9; j += 3) {
                 const x = positions[j];
                 const y = positions[j + 2];
-                positions[j + 1] = calculateHeight(x,y, center, biomeType,params,seed,perlin3D);
+                const height = calculateHeight(x, y, center, biomeType, params, seed, perlin3D);
+                positions[j + 1] = height;
                 const color = getColor(positions[i + 1], biomeType);
                 colors.push(...color, 1);
-            }  
+            } 
         }
     
         geometry.setAttribute(
@@ -80,8 +103,10 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
             transparent: true,
             side: THREE.BackSide,
         });
-        const terrain = new THREE.Mesh(geometry, material);    
-        return terrain;
+        const terrain = new THREE.Mesh(geometry, material);
+        const objects = getIslandObjects(center, params.maxRadius, 20, biomeType, seed, params, perlin3D);
+
+        return new THREE.Group().add(terrain, objects);    
     }
 }
 
@@ -117,8 +142,6 @@ function calculateHeight(x, y, center, biomeType, params, factor, perlin3D){
     }
 
     total /= normalization;
-
-    const baseHeight = 1;
     let final = Math.pow(total, params.exponentiation) * params.height;
 
     // apply taper if it's towards the edge
@@ -128,9 +151,8 @@ function calculateHeight(x, y, center, biomeType, params, factor, perlin3D){
     // add a base height for the island
     if (final > 0) {
         // change peaks based on biome
-
         final = modifyPeaks(final, biomeType);
-        final += baseHeight;
+        final += BASE_HEIGHT;
     }
     return final
 }

@@ -1,56 +1,44 @@
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
+import { loadModel } from '../utils/utils';
+import { DENSITY } from '../utils/constants';
+import seedrandom from 'seedrandom';
 
-// generate objects for scene
-export function generateObjects(scene) {
-    const loader = new GLTFLoader();
-    loader.load(
-        './models/tree.glb',
-        (gltf) => {
-            addSingleObjectType(scene, gltf);
-        },
-        undefined,
-        (error) => {
-            console.error(error);
-        }
-    );
-    // To add multiple types of objects, call again with different loaded object
-    //   loader.load(
-    //     "./models/cactus1.glb",
-    //     (gltf) => {
-    //       addSingleObjectType(scene, gltf);
-    //     },
-    //     undefined,
-    //     (error) => {
-    //       console.error(error);
-    //     }
-    //   );
-}
+// load models for different biome types
+const models = {
+    FOREST: [
+        await loadModel('/models/tree.glb'),
+    ],
+    DESERT: [
+        await loadModel('/models/cactus1.glb'),
+    ],
+    SNOWY: [
+        await loadModel('/models/i_love_graphics.glb'),
+    ],
+};
 
-// add single object
-function addSingleObjectType(scene, gltf) {
-    // Add multiple instances of the model at random positions
-    for (let i = 0; i < 50; i++) {
-        // TODO 50 models for now
-        const originalModel = gltf.scene;
-        const modelClone = originalModel.clone();
-
-        const randX = (Math.random() - 0.5) * 200;
-        const randZ = (Math.random() - 0.5) * 200;
-        // Randomize position
-        modelClone.position.set(
-            randX, // Random X in range [-10, 10]
-            0, // TODO Sample Y from perlin noise map
-            randZ // Random Z in range [-10, 10]
-        );
-
-        // Randomize scale
-        const scale = Math.random() * 0.5 + 0.5; // Scale between 0.5 and 1.0
-        modelClone.scale.set(scale, scale, scale);
-
-        // Randomize rotation around Y-axis
-        modelClone.rotation.y = Math.random() * 2 * Math.PI;
-
-        // Add the model to the scene
-        scene.add(modelClone);
+export function generateObj(pos, biomeType, seed) {
+    // error-check
+    const biomeModels = models[biomeType];
+    if (!biomeModels || biomeModels.length === 0) {
+        console.warn(`No models available for biome type: ${biomeType}`);
+        return null;
     }
+
+    const rng = seedrandom(seed);
+    if (rng() > DENSITY) {
+        return null;
+    }
+    const randIdx = Math.floor(rng() * biomeModels.length);
+    const model = biomeModels[randIdx].scene.clone();
+
+    // randomly scale
+    const scale = rng() * 0.2 + 0.3; // Scale between 0.3 and 0.5
+    model.scale.set(scale, scale, scale);
+
+    // randomly rotate around y-axis
+    model.rotation.y = rng() * 2 * Math.PI;
+
+    // set position
+    model.position.set(pos.x, pos.y, pos.z);
+
+    return model;
 }
