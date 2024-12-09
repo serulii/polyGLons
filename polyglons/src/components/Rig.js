@@ -64,9 +64,11 @@ export function animationInProgress(pair) {
  * @param {boolean} ortho 
  * @param {Camera} camera 
  * @param {boolean} appStart 
+ * @param {THREE.Vector3} orthoReturnPosition
+
  * @returns {AnimationStatePair}
  */
-function makeAnimationState(ortho, camera, appStart) {
+function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
     const start = {
         position: camera.position.clone(),
         quaternion: camera.quaternion.clone(),
@@ -87,7 +89,7 @@ function makeAnimationState(ortho, camera, appStart) {
     } else {
         const projectionMatrix = (new THREE.PerspectiveCamera()).projectionMatrix;
         const cam = camera.clone();
-        cam.position.copy(new THREE.Vector3(20.0, 10.0, -20.0));
+        cam.position.copy(orthoReturnPosition);
         cam.lookAt(0.0, 5.0, 0.0);
         end = {
             quaternion: cam.quaternion,
@@ -109,17 +111,17 @@ function makeAnimationState(ortho, camera, appStart) {
  * @param {AnimationStatePair} param0.cameraAnimationState 
  * @param {function} param0.setCameraAnimationState 
   * @param {} param0.boundingBoxes 
-
+  * @param {THREE.Vector3} param0.orthoReturnPosition
  */
-export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState, boundingBoxes }) {
+export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState, boundingBoxes, orthoReturnPosition }) {
     const { camera } = useThree();
 
     let state;
     if (!cameraAnimationState) {
-        state = makeAnimationState(ortho, camera.clone(), true); 
+        state = makeAnimationState(ortho, camera.clone(), true, orthoReturnPosition); 
         setCameraAnimationState(state);
     } else if (ortho !== cameraAnimationState.ortho) {
-        state = makeAnimationState(ortho, camera.clone(), false); 
+        state = makeAnimationState(ortho, camera.clone(), false, orthoReturnPosition); 
         setCameraAnimationState(state);
     } else {
         state = cameraAnimationState;
@@ -127,6 +129,7 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
 
     useFrame(() => {
         camera.position.y = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+
         const progress = (document.timeline.currentTime - state.animationStart) / animationDuration;
         if (0 <= progress && progress <= 1.0) {
             const curve = ortho 
@@ -134,16 +137,15 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
                 : 1 - Math.sqrt(1 - Math.pow(progress, 2));
 
             camera.position.copy(
-                lerpVector(curve, state.start.position, state.end.position));
+                lerpVector(progress, state.start.position, state.end.position));
 
             camera.quaternion.slerpQuaternions(
-                state.start.quaternion, state.end.quaternion, curve);
+                state.start.quaternion, state.end.quaternion, progress);
 
             camera.projectionMatrix.copy(
                 lerpMatrix(curve, state.start.projectionMatrix, state.end.projectionMatrix));
-
-            camera.updateMatrixWorld(true);
         }
+
 
     });
 }

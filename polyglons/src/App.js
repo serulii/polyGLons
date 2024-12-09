@@ -104,6 +104,7 @@ function Scene() {
         return () => gui.destroy();
     }, [params]);
 
+    const [orthoReturnPosition, setOrthoReturnPosition] = useState(new THREE.Vector3(20.0, 1.0, -20.0));
     const [boundingBoxes, setBoundingBoxes] = useState([]);
     const [ortho, setOrtho] = useState(false);
     const [cameraAnimationState, setCameraAnimationState] = useState();
@@ -117,6 +118,7 @@ function Scene() {
                     cameraAnimationState={cameraAnimationState} 
                     setCameraAnimationState={setCameraAnimationState}
                     boundingBoxes={boundingBoxes}
+                    orthoReturnPosition={orthoReturnPosition}
                 />
                 <ambientLight intensity={0} />
                 <directionalLight intensity={1} />
