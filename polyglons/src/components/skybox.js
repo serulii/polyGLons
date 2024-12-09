@@ -24,8 +24,9 @@ export default function Skybox({ cameraAnimationState }) {
         './skybox/Daylight Box_Back.bmp',
     ]);
 
+    const skyBlue = new THREE.Color('skyblue');
     useFrame(() => {
-        scene.background = animationInProgress(cameraAnimationState) ? null : texture;
+        scene.background = animationInProgress(cameraAnimationState) ? skyBlue : texture;
     });
 
     return null;
