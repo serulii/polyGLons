@@ -9,9 +9,6 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
     const velocity = useRef({ x: 0, y: 0, z: 0 }); // speed
     const acceleration = 0.02; // speed increment
     const damping = 0.9; // dampening factor to slow down
-
-    const boundingBoxesRef = useRef(boundingBoxes);
-
     const activeKeys = useRef({}); // active keys map
     const targetQuaternion = useRef(new THREE.Quaternion()); // use quaternions for shortest path (otherwise boat may rotate the wrong way)
 
@@ -88,11 +85,7 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
                 !getIsland(
                     modelRef.current.position.x + vel.x,
                     modelRef.current.position.z + vel.z,
-<<<<<<< HEAD
-                    boundingBoxesRef.current
-=======
                     boundingBoxes
->>>>>>> 6ae4043 (boat collision and rig ortho)
                 )
             ) {
                 // update the boat's position

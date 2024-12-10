@@ -146,14 +146,10 @@ function Scene() {
                         <FlyControls autoForward={false} movementSpeed={2} />
                     </>
                 )}
-<<<<<<< HEAD
-                <BoatControls ortho={ortho} boundingBoxes={boundingBoxes} modelRef={modelRef}/>
-=======
                 <BoatControls ortho={ortho}
                             modelRef={modelRef}
                             boundingBoxes={boundingBoxes}
                  />
->>>>>>> 6ae4043 (boat collision and rig ortho)
             </Canvas>
             <button className="button" onClick={() => setOrtho(!ortho)}>
                 Change View
