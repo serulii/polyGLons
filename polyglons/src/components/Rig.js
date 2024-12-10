@@ -118,7 +118,7 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
 export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState, boundingBoxes, orthoReturnPosition }) {
     const { camera, controls } = useThree();
     const [animationComplete, setAnimationComplete] = useState(false);
-
+    const targetHeight = useRef(camera.position.y);
     const isMoving = useRef(false); // whether user is moving
     const bobbingPhase = useRef(0); // phase for sine wave
 
@@ -135,11 +135,16 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
 
     useFrame((_, delta) => {
         if (!ortho) {
-            // camera pos at terrain height + bobbing
-            const baseHeight = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+            // camera pos = terrain height + bobbing
+            let baseHeight = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+            targetHeight.current = baseHeight;
+
+            // lerp for smoother transitions
+            const factor = 5 * delta; // can adjust :)
+            baseHeight = THREE.MathUtils.lerp(camera.position.y, targetHeight.current, factor);
             if (isMoving.current) {
                 const frequency = 1; // bobbing frequency
-                const amplitude = 0.1; // bobbing height
+                const amplitude = 0.02; // bobbing height
 
                 bobbingPhase.current += delta * frequency * Math.PI * 2;
                 const offset = Math.sin(bobbingPhase.current) * amplitude;
