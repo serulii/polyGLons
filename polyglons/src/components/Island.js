@@ -4,9 +4,11 @@ import {
     BIOME_PEAKS,
     TESSELATION,
     BASE_HEIGHT,
+    SCENE_DIMENSION,
 } from '../utils/constants';
 import { getIsland } from './Terrain';
 import { generateObj } from '../object/objectGen';
+import { SceneNode } from 'three/webgpu';
 
 function getColor(height, biomeType) {
     const colors = BIOME_COLORS[biomeType];
@@ -234,4 +236,50 @@ export function getHeight(x, y, boundingBoxes) {
         perlin3D
     );
     return final;
+}
+
+export function getNearestReachableCoordinate(x, y, boundingBoxes) {
+    const visited = new Set();
+    const q = [[x, y]];
+
+    const dirs = [
+        [0, 1],
+        [1, 0],
+        [0, -1],
+        [-1, 0],
+    ];
+
+    const toString = (coord) => `${coord[0]},${coord[1]}`;
+
+    while (q.length > 0) {
+        const cur = q.shift();
+        // console.log(cur);
+        const curCoords = toString(cur);
+
+        if (!visited.has(curCoords)) {
+            visited.add(curCoords);
+
+            const final = getHeight(cur[0], cur[1], boundingBoxes);
+            if (final > 0) {
+                return cur;
+            }
+
+            for (let i = 0; i < dirs.length; i++) {
+                let nX = cur[0] + dirs[i][0];
+                let nY = cur[1] + dirs[i][1];
+                const nCoords = toString([nX, nY]);
+
+                if (
+                    !visited.has(nCoords) &&
+                    nX > -SCENE_DIMENSION &&
+                    nX < SCENE_DIMENSION &&
+                    nY > -SCENE_DIMENSION &&
+                    nY < SCENE_DIMENSION
+                ) {
+                    q.push([nX, nY]);
+                }
+            }
+        }
+    }
+    return [0, 0];
 }

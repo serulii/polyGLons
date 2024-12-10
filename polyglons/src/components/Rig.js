@@ -1,7 +1,7 @@
 import { useThree, useFrame, Camera } from '@react-three/fiber';
 import * as THREE from 'three';
-import { getHeight } from './Island';
-import { useEffect, useState } from 'react';
+import { getHeight, getNearestReachableCoordinate } from './Island';
+import { useEffect, useState, useRef } from 'react';
 
 /**
  * @typedef {Object} AnimationState
@@ -124,6 +124,7 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
  * @param {} param0.boundingBoxes
  * @param {THREE.Vector3} param0.orthoReturnPosition
  */
+
 export default function Rig({
     ortho,
     cameraAnimationState,
@@ -132,6 +133,17 @@ export default function Rig({
     orthoReturnPosition,
 }) {
     const { camera, controls } = useThree();
+    const [animationComplete, setAnimationComplete] = useState(false);
+    const targetHeight = useRef(camera.position.y);
+    const isOnBoat = useRef(true); // if on boat
+    const isMoving = useRef(false); // whether user is moving
+    const bobbingPhase = useRef(0); // phase for sine wave
+    const adjustedHeight = 1.3;
+    const prevPosition = useRef({
+        x: camera.position.x,
+        y: camera.position.y + adjustedHeight,
+        z: camera.position.z,
+    });
 
     let state;
     if (!cameraAnimationState) {
@@ -154,12 +166,11 @@ export default function Rig({
         state = cameraAnimationState;
     }
 
-    const [animationComplete, setAnimationComplete] = useState(false);
-
-    useFrame(() => {
+    useFrame((_, delta) => {
         if (!ortho) {
-            camera.position.y =
-                1 +
+            // camera pos = terrain height + bobbing
+            let baseHeight =
+                adjustedHeight +
                 Math.max(
                     0.0,
                     getHeight(
@@ -168,6 +179,42 @@ export default function Rig({
                         boundingBoxes
                     )
                 );
+            targetHeight.current = baseHeight;
+
+            // lerp for smoother transitions
+            const factor = 5 * delta; // can adjust :)
+            baseHeight = THREE.MathUtils.lerp(
+                camera.position.y,
+                targetHeight.current,
+                factor
+            );
+            if (isMoving.current) {
+                const frequency = 1; // bobbing frequency
+                const amplitude = 0.02; // bobbing height
+
+                bobbingPhase.current += delta * frequency * Math.PI * 2;
+                const offset = Math.sin(bobbingPhase.current) * amplitude;
+
+                camera.position.y = baseHeight + offset;
+            } else {
+                // reset when not moving
+                bobbingPhase.current = 0;
+                camera.position.y = baseHeight;
+            }
+
+            if (targetHeight.current <= adjustedHeight) {
+                camera.position.set(
+                    prevPosition.current.x,
+                    prevPosition.current.y,
+                    prevPosition.current.z
+                );
+            } else {
+                prevPosition.current = {
+                    x: camera.position.x,
+                    y: camera.position.y,
+                    z: camera.position.z,
+                };
+            }
         }
         const progress =
             (document.timeline.currentTime - state.animationStart) /
@@ -215,4 +262,44 @@ export default function Rig({
     useEffect(() => {
         setAnimationComplete(false);
     }, [ortho]);
+
+    // to track when user is moving
+    useEffect(() => {
+        function onKeyDown(event) {
+            if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) {
+                isMoving.current = true;
+            }
+            if (['KeyE'].includes(event.code)) {
+                let closestCoords = getNearestReachableCoordinate(
+                    camera.position.x,
+                    camera.position.z,
+                    boundingBoxes
+                );
+                camera.position.set(
+                    closestCoords[0],
+                    getHeight(
+                        closestCoords[0],
+                        closestCoords[1],
+                        boundingBoxes
+                    ) + adjustedHeight,
+                    closestCoords[1]
+                );
+                isOnBoat.current = false;
+                console.log(boundingBoxes);
+            }
+        }
+        function onKeyUp(event) {
+            if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) {
+                isMoving.current = false;
+            }
+        }
+
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keyup', onKeyUp);
+
+        return () => {
+            window.removeEventListener('keydown', onKeyDown);
+            window.removeEventListener('keyup', onKeyUp);
+        };
+    }, [boundingBoxes]);
 }
