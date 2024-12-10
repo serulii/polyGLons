@@ -4,97 +4,100 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 import React, { useRef, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 
-const BoatControls = () => {
+const BoatControls = ({ ortho }) => {
     const modelRef = useRef(); // boat ref
     const velocity = useRef({ x: 0, y: 0, z: 0 }); // speed
     const acceleration = 0.02; // speed increment
     const damping = 0.9; // dampening factor to slow down
+    const orthoRef = useRef(ortho); // need this to make sure ortho is updated correctly
+    const activeKeys = useRef({}); // active keys map
+    const targetQuaternion = useRef(new THREE.Quaternion()); // use quaternions for shortest path (otherwise boat may rotate the wrong way)
 
     useEffect(() => {
+        // this updates orthoRef with the current ortho state
+        orthoRef.current = ortho;
+    }, [ortho]);
+
+    // key press handling
+    useEffect(() => {
         const handleKeyDown = (event) => {
-            if (modelRef.current) {
-                const vel = velocity.current;
-                const position = modelRef.current.position;
-                switch (event.key) {
-                    case 'w':
-                    case 'ArrowUp': // move up
-                        vel.x -= acceleration;
-                        position.x -= 0.1;
-                        break;
-                    case 's':
-                    case 'ArrowDown': // move down
-                        vel.x += 0.1;
-                        break;
-                    case 'd':
-                    case 'ArrowRight': // move right
-                        vel.z -= 0.1;
-                        break;
-                    case 'a':
-                    case 'ArrowLeft': // move left
-                        vel.z += 0.1;
-                        break;
-                    default:
-                        break;
-                }
+            if (orthoRef.current) {
+                activeKeys.current[event.key] = true; // key is pressed
+            }
+        };
+
+        const handleKeyUp = (event) => {
+            if (orthoRef.current) {
+                activeKeys.current[event.key] = false; // key is no longer pressed
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
         };
     }, []);
 
+    // rotation and velocity calculation
     useFrame(() => {
-        if (modelRef.current) {
-            // Apply velocity with damping
-            velocity.current.x *= damping;
-            velocity.current.y *= damping;
-            velocity.current.z *= damping;
+        if (modelRef.current && orthoRef.current) {
+            const vel = velocity.current;
+            const euler = new THREE.Euler();
+            let newRotation = false;
+            // adjust velocity depending on keys pressed
+            if (activeKeys.current['w'] || activeKeys.current['ArrowUp']) {
+                vel.x -= acceleration;
+                euler.set(0, -Math.PI / 2.0, 0);
+                newRotation = true;
+            }
+            if (activeKeys.current['s'] || activeKeys.current['ArrowDown']) {
+                vel.x += acceleration;
+                euler.set(0, Math.PI / 2.0, 0);
+                newRotation = true;
+                // modelRef.current.rotation.set(0, 1.6, 0);
+            }
+            if (activeKeys.current['d'] || activeKeys.current['ArrowRight']) {
+                vel.z -= acceleration;
+                euler.set(0, Math.PI, 0);
+                newRotation = true;
+                // targetRotation.current = { x: 0, y: Math.PI, z: 0 };
+                // modelRef.current.rotation.set(0, 3.14, 0);
+            }
+            if (activeKeys.current['a'] || activeKeys.current['ArrowLeft']) {
+                vel.z += acceleration;
+                euler.set(0, 0, 0);
+                newRotation = true;
+                // targetRotation.current = { x: 0, y: 0, z: 0 };
+                // modelRef.current.rotation.set(0, 0, 0);
+            }
 
-            // Update the object's position
-            modelRef.current.position.x += velocity.current.x;
-            modelRef.current.position.y += velocity.current.y;
-            modelRef.current.position.z += velocity.current.z;
+            // convert euler to quaternion
+            if (newRotation) {
+                targetQuaternion.current.setFromEuler(euler);
+            }
+
+            // interpolate current rotation towards target using slerp
+            modelRef.current.quaternion.slerp(targetQuaternion.current, 0.1);
+
+            // apply velocity with damping
+            vel.x *= damping;
+            vel.y *= damping;
+            vel.z *= damping;
+
+            // update the boat's position
+            modelRef.current.position.x += vel.x;
+            modelRef.current.position.y += vel.y;
+            modelRef.current.position.z += vel.z;
         }
     });
 
-    const { scene } = useGLTF('./models/boat.gltf'); // Adjust the path to your GLTF file
+    const { scene } = useGLTF('./models/boat.gltf');
     scene.scale.set(0.2, 0.2, 0.2);
 
     return <primitive ref={modelRef} object={scene} />;
 };
 
-const Boat = () => {
-    return <BoatControls />;
-};
-
-export default Boat;
-
-// export default function BoatControls() {
-//     const { scene } = useThree();
-//     generateBoat(scene);
-//     document.addEventListener('keydown', onKeyDown, false);
-//     function onKeyDown(e) {
-//         var keyCode = e.which;
-//         if (keyCode == 87) {
-//         }
-//     }
-//     return;
-// }
-
-// function generateBoat(scene) {
-//     const loader = new GLTFLoader();
-//     loader.load(
-//         './models/boat.gltf',
-//         (gltf) => {
-//             gltf.scene.scale.set(0.2, 0.2, 0.2);
-//             scene.add(gltf.scene);
-//             return gltf.scene;
-//         },
-//         undefined,
-//         (error) => {
-//             console.error(error);
-//         }
-//     );
-// }
+export default BoatControls;
