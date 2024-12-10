@@ -34,7 +34,7 @@ import Controls from './components/Controls';
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
 function Scene() {
-    const [params, setParams] = useState({
+    const params = {
         scale: 10,
         octaves: 8,
         lacunarity: 2.0,
@@ -43,66 +43,9 @@ function Scene() {
         height: 5.5,
         minRadius: 10,
         maxRadius: 12,
-        numIslands: 5,
         radius: 10,
-    });
+    };
 
-    useEffect(() => {
-        const gui = new dat.GUI();
-        gui.add(params, 'scale', 0, 10)
-            .name('Scale')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, scale: value }))
-            );
-        gui.add(params, 'octaves', 1, 8, 1)
-            .name('Octaves')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, octaves: value }))
-            );
-        gui.add(params, 'lacunarity', 1, 3)
-            .step(0.1)
-            .name('Lacunarity')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, lacunarity: value }))
-            );
-        gui.add(params, 'persistence', 0, 1)
-            .step(0.01)
-            .name('Persistence')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, persistence: value }))
-            );
-        gui.add(params, 'exponentiation', 0.1, 5)
-            .step(0.1)
-            .name('Exponentiation')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, exponentiation: value }))
-            );
-        gui.add(params, 'height', 0, 100)
-            .name('Height')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, height: value }))
-            );
-
-        gui.add(params, 'minRadius', 0, 100)
-            .name('minRadius')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, minRadius: value }))
-            );
-
-        gui.add(params, 'maxRadius', 0, 100)
-            .name('maxRadius')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, maxRadius: value }))
-            );
-
-        gui.add(params, 'numIslands', 0, 100)
-            .name('numIslands')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, numIslands: value }))
-            );
-
-        return () => gui.destroy();
-    }, [params]);
 
     const [orthoReturnPosition, setOrthoReturnPosition] = useState(
         new THREE.Vector3(20.0, 1.0, -20.0)
@@ -137,8 +80,13 @@ function Scene() {
                     params={params}
                     setBoundingBoxes={setBoundingBoxes}
                     boundingBoxes={boundingBoxes}
+                    cameraAnimationState={cameraAnimationState}
+                    ortho={ortho}
                 />
-                <Water />
+                <Water 
+                    useBoatPos={ortho}
+                    modelRef={modelRef}
+                />
                 {<Skybox cameraAnimationState={cameraAnimationState} />}
                 {!ortho && (
                     <>
@@ -151,9 +99,6 @@ function Scene() {
                             boundingBoxes={boundingBoxes}
                  />
             </Canvas>
-            <button className="button" onClick={() => setOrtho(!ortho)}>
-                Change View
-            </button>
         </>
     );
 }

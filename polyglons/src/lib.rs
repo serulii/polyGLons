@@ -61,17 +61,16 @@ pub fn water_buf(
         let scene_point = water_point.map(|x| x as f32 * scale_factor - water_radius);
         let scene_point = Point3::new(scene_point[0], 0.0, scene_point[1]);
         match distance(&scene_point, &position) / water_radius {
-            ..0.1 => 5,
-            ..0.2 => 4,
-            ..0.5 => 3,
-            ..0.7 => 2,
+            ..0.2 => 5,
+            ..0.5 => 4,
+            ..0.7 => 0,
             _ => 0,
         }
     };
     let perlin = MeshPerlin3d::default();
     let get_position = |water_point: &Point2<i32>| -> Point3<f32> {
         let scene_point = water_point.map(|x| x as f32 * scale_factor - water_radius);
-        let perlin_point = scene_point.coords.scale(0.3);
+        let perlin_point = scene_point.coords.scale(0.05);
         let height = perlin.get(
             &Point3::new(perlin_point.x, perlin_point.y, time_millis / 3e3),
             "height",
@@ -79,7 +78,7 @@ pub fn water_buf(
         Point3::new(scene_point[0], height * height_scale, scene_point[1])
     };
     let get_color = |scene_point: &Point3<f32>| -> Color {
-        let perlin_point = scene_point.coords.scale(0.3);
+        let perlin_point = scene_point.coords.scale(0.05);
         let alpha = perlin.get(
             &(Point3::new(perlin_point.x, perlin_point.z, time_millis / 3e3)
                 - Vector3::from_element(1e3)),

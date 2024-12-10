@@ -12,7 +12,7 @@ import {
     water_buf_stride_floats,
 } from '../polyglons-wasm/polyglons_wasm';
 
-export default function ({  }) {
+export default function ({ useBoatPos, modelRef }) {
     const material = new THREE.MeshPhongMaterial({
         vertexColors: true,
         wireframe: false,
@@ -29,7 +29,10 @@ export default function ({  }) {
 
     const get_buf = () => {
         const time_millis = document.timeline.currentTime;
-        const position = new Float32Array([...camera.position]);
+        const position = useBoatPos && modelRef.current
+            ? new Float32Array([...modelRef.current.position])
+            : new Float32Array([...camera.position]);
+
         return water_buf(
             time_millis, 
             height_scale, 
