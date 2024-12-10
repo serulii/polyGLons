@@ -214,11 +214,9 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
                 isMoving.current = true;
             }
             else if (['KeyE'].includes(event.code)){
-                if(isOnBoat.current){
-                    let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
-                    camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
-                    isOnBoat.current = false;
-                }
+                let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
+                camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
+                isOnBoat.current = false;
             }
         }
         function onKeyUp(event) {
