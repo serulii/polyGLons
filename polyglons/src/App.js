@@ -133,7 +133,10 @@ function Scene() {
                     cameraAnimationState={cameraAnimationState}
                     ortho={ortho}
                 />
-                <Water />
+                <Water 
+                    useBoatPos={ortho}
+                    modelRef={modelRef}
+                />
                 {<Skybox cameraAnimationState={cameraAnimationState} />}
                 {!ortho && (
                     <>
