@@ -1,7 +1,7 @@
 import { useThree, useFrame, Camera } from '@react-three/fiber';
 import * as THREE from 'three';
-import { getHeight } from './Island';
-import { useEffect, useState, useRef} from 'react';
+import { getHeight, getNearestReachableCoordinate } from './Island';
+import { useEffect, useState, useRef } from 'react';
 
 
 /**
@@ -115,13 +115,32 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
   * @param {} param0.boundingBoxes 
   * @param {THREE.Vector3} param0.orthoReturnPosition
  */
+
 export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState, boundingBoxes, orthoReturnPosition }) {
+    
     const { camera, controls } = useThree();
     const [animationComplete, setAnimationComplete] = useState(false);
 
     const isMoving = useRef(false); // whether user is moving
     const bobbingPhase = useRef(0); // phase for sine wave
+    const adjustedHeight = 1.3;
+    const prevPosition = useRef({x: camera.position.x, y:camera.position.y + adjustedHeight, z:camera.position.z});
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'e') { 
+            let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
+            camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
+        }
+    };
+
+     useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    });
+    
     let state;
     if (!cameraAnimationState) {
         state = makeAnimationState(ortho, camera.clone(), true, orthoReturnPosition); 
