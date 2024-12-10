@@ -100,8 +100,8 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelR
         cam.position.copy(orthoCameraPosition(modelRef));
         cam.lookAt(0.0, 5.0, 0.0);
         cam.projectionMatrix.makeOrthographic(
-            (-30 * window.innerHeight) / window.innerWidth,
-            (30 * window.innerHeight) / window.innerWidth,
+            (-30 * window.innerWidth) / window.innerHeight,
+            (30 * window.innerWidth) / window.innerHeight,
             30,
             -30,
             -1000,
