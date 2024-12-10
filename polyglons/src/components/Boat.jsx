@@ -5,33 +5,26 @@ import React, { useRef, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { getIsland } from './Terrain.js';
 
-const BoatControls = ({ ortho, boundingBoxes }) => {
-    const modelRef = useRef(); // boat ref
+const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
     const velocity = useRef({ x: 0, y: 0, z: 0 }); // speed
     const acceleration = 0.02; // speed increment
     const damping = 0.9; // dampening factor to slow down
 
-    const orthoRef = useRef(ortho);
     const boundingBoxesRef = useRef(boundingBoxes);
 
     const activeKeys = useRef({}); // active keys map
     const targetQuaternion = useRef(new THREE.Quaternion()); // use quaternions for shortest path (otherwise boat may rotate the wrong way)
 
-    useEffect(() => {
-        // this updates orthoRef with the current ortho state
-        orthoRef.current = ortho;
-    }, [ortho]);
-
     // key press handling
     useEffect(() => {
         const handleKeyDown = (event) => {
-            if (orthoRef.current) {
+            if (ortho) {
                 activeKeys.current[event.key] = true; // key is pressed
             }
         };
 
         const handleKeyUp = (event) => {
-            if (orthoRef.current) {
+            if (ortho) {
                 activeKeys.current[event.key] = false; // key is no longer pressed
             }
         };
@@ -47,7 +40,7 @@ const BoatControls = ({ ortho, boundingBoxes }) => {
 
     // rotation and velocity calculation
     useFrame(() => {
-        if (modelRef.current && orthoRef.current) {
+        if (modelRef.current && ortho) {
             const vel = velocity.current;
             const euler = new THREE.Euler();
             let newRotation = false;

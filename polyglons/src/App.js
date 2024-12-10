@@ -8,7 +8,7 @@ import {
     FirstPersonControls,
 } from '@react-three/drei';
 import * as THREE from 'three';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Skybox from './components/Skybox';
 import initWasm from './polyglons-wasm/polyglons_wasm';
 import BoatControls from './components/Boat.jsx';
@@ -108,8 +108,9 @@ function Scene() {
         new THREE.Vector3(20.0, 1.0, -20.0)
     );
     const [boundingBoxes, setBoundingBoxes] = useState([]);
-    const [ortho, setOrtho] = useState(false);
+    const [ortho, setOrtho] = useState(true);
     const [cameraAnimationState, setCameraAnimationState] = useState();
+    const modelRef = useRef();
 
     return (
         <>
@@ -117,10 +118,13 @@ function Scene() {
             <Canvas>
                 <Rig
                     ortho={ortho}
+                    setOrtho={setOrtho}
+                    setOrthoReturnPosition={setOrthoReturnPosition}
                     cameraAnimationState={cameraAnimationState}
                     setCameraAnimationState={setCameraAnimationState}
                     boundingBoxes={boundingBoxes}
                     orthoReturnPosition={orthoReturnPosition}
+                    modelRef={modelRef}
                 />
                 <ambientLight intensity={0} />
                 <directionalLight intensity={1} />
@@ -142,7 +146,7 @@ function Scene() {
                         <FlyControls autoForward={false} movementSpeed={2} />
                     </>
                 )}
-                <BoatControls ortho={ortho} boundingBoxes={boundingBoxes} />
+                <BoatControls ortho={ortho} boundingBoxes={boundingBoxes} modelRef={modelRef}/>
             </Canvas>
             <button className="button" onClick={() => setOrtho(!ortho)}>
                 Change View

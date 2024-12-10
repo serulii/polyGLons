@@ -127,10 +127,13 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
 
 export default function Rig({
     ortho,
+    setOrtho,
+    setOrthoReturnPosition,
     cameraAnimationState,
     setCameraAnimationState,
     boundingBoxes,
     orthoReturnPosition,
+    modelRef
 }) {
     const { camera, controls } = useThree();
     const [animationComplete, setAnimationComplete] = useState(false);
@@ -270,20 +273,26 @@ export default function Rig({
                 isMoving.current = true;
             }
             if (['KeyE'].includes(event.code)) {
+                setOrtho(!ortho);
                 let closestCoords = getNearestReachableCoordinate(
-                    camera.position.x,
-                    camera.position.z,
+                    modelRef.current.position.x,
+                    modelRef.current.position.z,
                     boundingBoxes
                 );
-                camera.position.set(
+                setOrthoReturnPosition(new THREE.Vector3(closestCoords[0],  getHeight(
                     closestCoords[0],
-                    getHeight(
-                        closestCoords[0],
-                        closestCoords[1],
-                        boundingBoxes
-                    ) + adjustedHeight,
-                    closestCoords[1]
-                );
+                    closestCoords[1],
+                    boundingBoxes
+                ) + adjustedHeight, closestCoords[1]))
+                // camera.position.set(
+                //     closestCoords[0],
+                //     getHeight(
+                //         closestCoords[0],
+                //         closestCoords[1],
+                //         boundingBoxes
+                //     ) + adjustedHeight,
+                //     closestCoords[1]
+                // );
                 isOnBoat.current = false;
             }
         }
@@ -300,5 +309,5 @@ export default function Rig({
             window.removeEventListener('keydown', onKeyDown);
             window.removeEventListener('keyup', onKeyUp);
         };
-    }, [boundingBoxes, camera.position]);
+    }, [boundingBoxes, camera.position, ortho]);
 }
