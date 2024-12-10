@@ -140,9 +140,9 @@ function Scene() {
                     <>
                         <FirstPersonControls makeDefault lookSpeed={0.2} />
                         <FlyControls autoForward={false} movementSpeed={2} />
-                        <BoatControls />
                     </>
                 )}
+                <BoatControls />
             </Canvas>
             <button className="button" onClick={() => setOrtho(!ortho)}>
                 Change View
