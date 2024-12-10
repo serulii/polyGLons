@@ -53,12 +53,12 @@ function Scene() {
                     orthoReturnPosition={orthoReturnPosition}
                     modelRef={modelRef}
                 />
-                <ambientLight intensity={0} />
                 <directionalLight intensity={1} />
                 <hemisphereLight
                     intensity={1}
-                    groundColor={'ffd466'}
-                    skyColor={'170fff'}
+                    groundColor={new THREE.Color(0xffd466)}
+                    skyColor={new THREE.Color(0x170fff)}
+                    direction={new THREE.Vector3(-0.5, 0.0, 0.0)}
                 ></hemisphereLight>
                 <Terrain
                     setBoundingBoxes={setBoundingBoxes}

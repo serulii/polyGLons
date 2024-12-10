@@ -35,10 +35,6 @@ function modifyPeaks(height, biomeType) {
     return height * variations[variations.length - 1].variation;
 }
 
-function lerp(x, in_min, in_max, out_min, out_max) {
-    return out_min + ((x - in_min) * (out_max - out_min)) / (in_max - in_min);
-}
-
 function getPlaneGeometry(centerX, centerZ, radius, tesselationVal) {
     const diameter = radius * 2;
     let geometry = new THREE.PlaneGeometry(
@@ -53,9 +49,9 @@ function getPlaneGeometry(centerX, centerZ, radius, tesselationVal) {
         const x = positions[i];
         const z = positions[i + 1];
         const y = positions[i + 2];
-        positions[i] = lerp(x, 0.0, diameter, centerX, centerX + diameter);
+        positions[i] = x + centerX;
         positions[i + 1] = y;
-        positions[i + 2] = lerp(z, 0.0, diameter, centerZ, centerZ + diameter);
+        positions[i + 2] = z + centerZ;
     }
 
     return geometry;
