@@ -44,25 +44,29 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
             // adjust velocity depending on keys pressed
             if (activeKeys.current['w'] || activeKeys.current['ArrowUp']) {
                 vel.x -= acceleration;
-                euler.set(0, -Math.PI / 2.0, 0);
+                vel.z += acceleration;
+                euler.set(0, 7 * Math.PI / 4.0, 0);
                 newRotation = true;
             }
             if (activeKeys.current['s'] || activeKeys.current['ArrowDown']) {
                 vel.x += acceleration;
-                euler.set(0, Math.PI / 2.0, 0);
+                vel.z -= acceleration;
+                euler.set(0, 3 * Math.PI / 4.0, 0);
                 newRotation = true;
                 // modelRef.current.rotation.set(0, 1.6, 0);
             }
             if (activeKeys.current['d'] || activeKeys.current['ArrowRight']) {
+                vel.x -= acceleration;
                 vel.z -= acceleration;
-                euler.set(0, Math.PI, 0);
+                euler.set(0, 5 * Math.PI / 4, 0);
                 newRotation = true;
                 // targetRotation.current = { x: 0, y: Math.PI, z: 0 };
                 // modelRef.current.rotation.set(0, 3.14, 0);
             }
             if (activeKeys.current['a'] || activeKeys.current['ArrowLeft']) {
+                vel.x += acceleration;
                 vel.z += acceleration;
-                euler.set(0, 0, 0);
+                euler.set(0, 1 * Math.PI / 4, 0);
                 newRotation = true;
                 // targetRotation.current = { x: 0, y: 0, z: 0 };
                 // modelRef.current.rotation.set(0, 0, 0);
