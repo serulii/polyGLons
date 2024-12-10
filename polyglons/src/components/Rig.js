@@ -68,8 +68,8 @@ export function animationInProgress(pair) {
 const orthoCameraOffset = new THREE.Vector3(20.0, 10.0, -20.0);
 
 /**
- * 
- * @param {} modelRef 
+ *
+ * @param {} modelRef
  * @returns {THREE.Vector3}
  */
 function orthoCameraPosition(modelRef) {
@@ -81,7 +81,7 @@ function orthoCameraPosition(modelRef) {
 }
 
 /**
- * 
+ *
  */
 function getOrthoQuaternion() {
     const camera = new THREE.OrthographicCamera();
@@ -100,7 +100,13 @@ function getOrthoQuaternion() {
 
  * @returns {AnimationStatePair}
  */
-function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelRef) {
+function makeAnimationState(
+    ortho,
+    camera,
+    appStart,
+    orthoReturnPosition,
+    modelRef
+) {
     const start = {
         position: camera.position.clone(),
         quaternion: camera.quaternion.clone(),
@@ -127,8 +133,8 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelR
         };
     } else {
         const projectionMatrix = new THREE.PerspectiveCamera(
-            100,
-            window.innerWidth / window.innerHeight,
+            45,
+            window.innerWidth / window.innerHeight
         ).projectionMatrix;
         const cam = camera.clone();
         cam.position.copy(orthoReturnPosition);
@@ -187,7 +193,7 @@ export default function Rig({
             camera.clone(),
             true,
             orthoReturnPosition,
-            modelRef,
+            modelRef
         );
         setCameraAnimationState(state);
     } else if (ortho !== cameraAnimationState.ortho) {
@@ -196,7 +202,7 @@ export default function Rig({
             camera.clone(),
             false,
             orthoReturnPosition,
-            modelRef,
+            modelRef
         );
         setCameraAnimationState(state);
     } else {
@@ -257,10 +263,8 @@ export default function Rig({
             (document.timeline.currentTime - state.animationStart) /
             animationDuration;
 
-        
-        
         let animationInProgress = false;
-    
+
         if (0 <= progress) {
             if (progress <= 1.0) {
                 const curve = ortho
@@ -298,14 +302,13 @@ export default function Rig({
                 camera.projectionMatrix.copy(state.end.projectionMatrix);
                 setAnimationComplete(true);
                 animationInProgress = true;
-            } 
+            }
         }
 
         if (ortho && !animationInProgress) {
             camera.position.copy(orthoCameraPosition(modelRef));
             camera.quaternion.copy(getOrthoQuaternion());
         }
-
     });
 
     useEffect(() => {
@@ -325,11 +328,17 @@ export default function Rig({
                     modelRef.current.position.z,
                     boundingBoxes
                 );
-                setOrthoReturnPosition(new THREE.Vector3(closestCoords[0],  getHeight(
-                    closestCoords[0],
-                    closestCoords[1],
-                    boundingBoxes
-                ) + adjustedHeight, closestCoords[1]))
+                setOrthoReturnPosition(
+                    new THREE.Vector3(
+                        closestCoords[0],
+                        getHeight(
+                            closestCoords[0],
+                            closestCoords[1],
+                            boundingBoxes
+                        ) + adjustedHeight,
+                        closestCoords[1]
+                    )
+                );
                 isOnBoat.current = false;
             }
         }

@@ -21,13 +21,11 @@ const models = {
     ],
     DESERT: [
         await loadModel('/models/cactus1.glb'),
+        await loadModel('/models/ruins.gltf'),
         await loadModel('/models/prickly_pear.gltf'),
         await loadModel('models/rock3.gltf'),
     ],
-    SNOWY: [
-        await loadModel('/models/i_love_graphics.glb'),
-        await loadModel('/models/snowy_tree_1.gltf'),
-    ],
+    SNOWY: [await loadModel('/models/snowy_tree_1.gltf')],
 };
 
 export function generateObj(pos, biomeType, seed) {
@@ -39,9 +37,10 @@ export function generateObj(pos, biomeType, seed) {
     }
 
     const rng = seedrandom(seed);
-    if (rng() > DENSITY) {
+    if (rng() > DENSITY[biomeType]) {
         return null;
     }
+    // pick random model
     const randIdx = Math.floor(rng() * biomeModels.length);
     const model = biomeModels[randIdx].scene.clone();
 
