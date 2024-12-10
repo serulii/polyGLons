@@ -143,7 +143,6 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
                 group.add(curIsland);
             }
         }
-        getHeight(camera.position.x, camera.position.z, boundingBoxes);
     });
 
     function generateIslands(numIslands, bounds, minRadius, maxRadius) {

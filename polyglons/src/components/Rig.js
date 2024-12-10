@@ -285,7 +285,6 @@ export default function Rig({
                     closestCoords[1]
                 );
                 isOnBoat.current = false;
-                console.log(boundingBoxes);
             }
         }
         function onKeyUp(event) {
@@ -301,5 +300,5 @@ export default function Rig({
             window.removeEventListener('keydown', onKeyDown);
             window.removeEventListener('keyup', onKeyUp);
         };
-    }, [boundingBoxes]);
+    }, [boundingBoxes, camera.position]);
 }
