@@ -3,13 +3,17 @@ import { useThree, useFrame } from '@react-three/fiber';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
 import React, { useRef, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
+import { getIsland } from './Terrain.js';
 
-const BoatControls = ({ ortho }) => {
+const BoatControls = ({ ortho, boundingBoxes }) => {
     const modelRef = useRef(); // boat ref
     const velocity = useRef({ x: 0, y: 0, z: 0 }); // speed
     const acceleration = 0.02; // speed increment
     const damping = 0.9; // dampening factor to slow down
-    const orthoRef = useRef(ortho); // need this to make sure ortho is updated correctly
+
+    const orthoRef = useRef(ortho);
+    const boundingBoxesRef = useRef(boundingBoxes);
+
     const activeKeys = useRef({}); // active keys map
     const targetQuaternion = useRef(new THREE.Quaternion()); // use quaternions for shortest path (otherwise boat may rotate the wrong way)
 
@@ -86,11 +90,19 @@ const BoatControls = ({ ortho }) => {
             vel.x *= damping;
             vel.y *= damping;
             vel.z *= damping;
-
-            // update the boat's position
-            modelRef.current.position.x += vel.x;
-            modelRef.current.position.y += vel.y;
-            modelRef.current.position.z += vel.z;
+            // console.log(boundingBoxesRef.current);
+            if (
+                !getIsland(
+                    modelRef.current.position.x + vel.x,
+                    modelRef.current.position.z + vel.z,
+                    boundingBoxesRef.current
+                )
+            ) {
+                // update the boat's position
+                modelRef.current.position.x += vel.x;
+                modelRef.current.position.y += vel.y;
+                modelRef.current.position.z += vel.z;
+            }
         }
     });
 

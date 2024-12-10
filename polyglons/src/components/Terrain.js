@@ -23,6 +23,7 @@ export function getIsland(x, z, boundingBoxes) {
             return boundingBoxes[i + 1];
         }
     }
+    return null;
 }
 
 export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {

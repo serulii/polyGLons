@@ -142,7 +142,7 @@ function Scene() {
                         <FlyControls autoForward={false} movementSpeed={2} />
                     </>
                 )}
-                <BoatControls ortho={ortho} />
+                <BoatControls ortho={ortho} boundingBoxes={boundingBoxes} />
             </Canvas>
             <button className="button" onClick={() => setOrtho(!ortho)}>
                 Change View
