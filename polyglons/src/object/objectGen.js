@@ -26,6 +26,10 @@ const models = {
         await loadModel('models/rock3.gltf'),
     ],
     SNOWY: [await loadModel('/models/snowy_tree_1.gltf')],
+    BLOSSOM: [
+        await loadModel('/models/sakura_1.gltf'),
+        await loadModel('/models/petals.gltf'),
+    ],
 };
 
 export function generateObj(pos, biomeType, seed) {

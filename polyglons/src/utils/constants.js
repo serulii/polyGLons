@@ -22,6 +22,13 @@ export const BIOME_COLORS = {
         { height: 2.0, color: new THREE.Color(0.906, 0.929, 0.961) },
         { height: 3.0, color: new THREE.Color(1, 1, 1) },
     ],
+    BLOSSOM: [
+        { height: 0.0, color: new THREE.Color(0.2, 0.5, 0.1) },
+        { height: 0.5, color: new THREE.Color(1.0, 1.0, 0.4) },
+        { height: 1.5, color: new THREE.Color(0.2, 0.5, 0.1) },
+        { height: 2.0, color: new THREE.Color(0.541, 0.82, 0.365) },
+        { height: 3.0, color: new THREE.Color(1, 0.537, 0.639) },
+    ],
 };
 
 export const BIOME_PEAKS = {
@@ -33,6 +40,7 @@ export const BIOME_PEAKS = {
         { height: 2.0, variation: 1.8 },
         { height: 3.0, variation: 2.0 },
     ],
+    BLOSSOM: [{ height: 3.0, variation: 1.2 }],
 };
 
 const BASE_HEIGHT = 1;
@@ -43,7 +51,8 @@ const SEED = 12803;
 const DENSITY = {
     FOREST: 0.02,
     DESERT: 0.005,
-    SNOWY: 0.03,
+    SNOWY: 0.025,
+    BLOSSOM: 0.02,
 };
 const CLOSE_TESSELATION_DIVISOR = 1.5;
 const FAR_TESSELATION_DIVISOR = 4;
