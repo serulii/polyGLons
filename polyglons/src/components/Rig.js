@@ -1,7 +1,7 @@
 import { useThree, useFrame, Camera } from '@react-three/fiber';
 import * as THREE from 'three';
 import { getHeight } from './Island';
-import { useEffect, useState} from 'react';
+import { useEffect, useState, useRef} from 'react';
 
 
 /**
@@ -117,6 +117,10 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
  */
 export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState, boundingBoxes, orthoReturnPosition }) {
     const { camera, controls } = useThree();
+    const [animationComplete, setAnimationComplete] = useState(false);
+
+    const isMoving = useRef(false); // whether user is moving
+    const bobbingPhase = useRef(0); // phase for sine wave
 
     let state;
     if (!cameraAnimationState) {
@@ -129,11 +133,23 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
         state = cameraAnimationState;
     }
 
-    const [animationComplete, setAnimationComplete] = useState(false);
-
-    useFrame(() => {
+    useFrame((_, delta) => {
         if (!ortho) {
-            camera.position.y = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+            // camera pos at terrain height + bobbing
+            const baseHeight = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+            if (isMoving.current) {
+                const frequency = 1; // bobbing frequency
+                const amplitude = 0.1; // bobbing height
+
+                bobbingPhase.current += delta * frequency * Math.PI * 2;
+                const offset = Math.sin(bobbingPhase.current) * amplitude;
+
+                camera.position.y = baseHeight + offset;
+            } else {
+                // reset when not moving
+                bobbingPhase.current = 0;
+                camera.position.y = baseHeight;
+            }
         }
         const progress = (document.timeline.currentTime - state.animationStart) / animationDuration;
         
@@ -167,5 +183,27 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
     useEffect(() => {
         setAnimationComplete(false);
     }, [ortho]);
+
+    // to track when user is moving
+    useEffect(() => {
+        function onKeyDown(event) {
+            if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) {
+                isMoving.current = true;
+            }
+        }
+        function onKeyUp(event) {
+            if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) {
+                isMoving.current = false;
+            }
+        }
+
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keyup', onKeyUp);
+
+        return () => {
+            window.removeEventListener('keydown', onKeyDown);
+            window.removeEventListener('keyup', onKeyUp);
+        };
+    }, []);
 }
 
