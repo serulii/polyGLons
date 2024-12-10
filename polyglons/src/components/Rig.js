@@ -161,9 +161,7 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
                 camera.position.y = baseHeight;
             }
 
-            console.log(baseHeight);
-
-            if (baseHeight <= adjustedHeight){
+            if (targetHeight.current <= adjustedHeight){
                 camera.position.set(prevPosition.current.x, prevPosition.current.y, prevPosition.current.z);
             }
             else {
@@ -213,10 +211,11 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
             if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) {
                 isMoving.current = true;
             }
-            else if (['KeyE'].includes(event.code)){
-                let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
+            if (['KeyE'].includes(event.code)){
+                let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.z, boundingBoxes);
                 camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
                 isOnBoat.current = false;
+                console.log(boundingBoxes);
             }
         }
         function onKeyUp(event) {
@@ -232,6 +231,5 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
             window.removeEventListener('keydown', onKeyDown);
             window.removeEventListener('keyup', onKeyUp);
         };
-    }, []);
+    }, [boundingBoxes]);
 }
-
