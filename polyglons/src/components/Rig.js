@@ -284,15 +284,6 @@ export default function Rig({
                     closestCoords[1],
                     boundingBoxes
                 ) + adjustedHeight, closestCoords[1]))
-                // camera.position.set(
-                //     closestCoords[0],
-                //     getHeight(
-                //         closestCoords[0],
-                //         closestCoords[1],
-                //         boundingBoxes
-                //     ) + adjustedHeight,
-                //     closestCoords[1]
-                // );
                 isOnBoat.current = false;
             }
         }

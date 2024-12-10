@@ -26,16 +26,16 @@ export const BIOME_COLORS = {
 
 export const BIOME_PEAKS = {
     FOREST: [
-        { height: 3.0, variation: 0.8},
+        { height: 3.0, variation: 1.2},
     ],
     DESERT: [
         { height: 3.0, variation: 0.6},
     ],
     SNOWY: [
         { height: 0.5, variation: 0.8},
-        { height: 1.5, variation: 1.0},
-        { height: 2.0, variation: 1.2},
-        { height: 3.0, variation: 1.4},
+        { height: 1.5, variation: 1.5},
+        { height: 2.0, variation: 1.8},
+        { height: 3.0, variation: 2.0},
     ],
 };
 
