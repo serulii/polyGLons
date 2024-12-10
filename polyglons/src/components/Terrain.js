@@ -80,10 +80,10 @@ export default function Terrain({ setBoundingBoxes, cameraAnimationState, ortho 
             );
             group.add(curIsland);
             tempBox.push({
-                xLeft: newIslands[i].x - newIslands[i].radius,
-                xRight: newIslands[i].x + newIslands[i].radius,
-                yBottom: newIslands[i].y - newIslands[i].radius,
-                yTop: newIslands[i].y + newIslands[i].radius,
+                xLeft: newIslands[i].x - newIslands[i].radius + 2,
+                xRight: newIslands[i].x + newIslands[i].radius - 2,
+                yBottom: newIslands[i].y - newIslands[i].radius + 2,
+                yTop: newIslands[i].y + newIslands[i].radius - 2,
             });
             tempBox.push(newIslands[i]);
         }

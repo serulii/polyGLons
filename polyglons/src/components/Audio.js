@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import '../css/style.css'
 
 const AudioPlayer = () => {
-  const songs = ['Flower Garden', 'Overworld', 'Athletic', 'Map', 'Big Boss'];
+  const songs = ['Flower Garden', 'Overworld', 'Athletic', 'Map'];
   const [songIndex, setSongIndex] = useState(0);
   const [volumeOn, setVolumeOn] = useState(true);
   const audioRef = useRef();
