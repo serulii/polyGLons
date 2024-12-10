@@ -66,14 +66,28 @@ export function animationInProgress(pair) {
 
 /**
  * 
+ * @param {} modelRef 
+ * @returns {THREE.Vector3}
+ */
+function orthoCameraPosition(modelRef) {
+    let boatPos = new THREE.Vector3();
+    if (modelRef.current) {
+        boatPos = modelRef.current.position.clone();
+    }
+    return boatPos.add(new THREE.Vector3(20.0, 10.0, -20.0));
+}
+
+/**
+ * 
  * @param {boolean} ortho 
  * @param {Camera} camera 
  * @param {boolean} appStart 
  * @param {THREE.Vector3} orthoReturnPosition
+ * @param {} modelRef
 
  * @returns {AnimationStatePair}
  */
-function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
+function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelRef) {
     const start = {
         position: camera.position.clone(),
         quaternion: camera.quaternion.clone(),
@@ -83,7 +97,7 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
     let end;
     if (ortho) {
         const cam = camera.clone();
-        cam.position.copy(new THREE.Vector3(20.0, 10.0, -20.0));
+        cam.position.copy(orthoCameraPosition(modelRef));
         cam.lookAt(0.0, 5.0, 0.0);
         cam.projectionMatrix.makeOrthographic(
             (-30 * window.innerWidth) / window.innerHeight,
@@ -154,7 +168,8 @@ export default function Rig({
             ortho,
             camera.clone(),
             true,
-            orthoReturnPosition
+            orthoReturnPosition,
+            modelRef,
         );
         setCameraAnimationState(state);
     } else if (ortho !== cameraAnimationState.ortho) {
@@ -162,7 +177,8 @@ export default function Rig({
             ortho,
             camera.clone(),
             false,
-            orthoReturnPosition
+            orthoReturnPosition,
+            modelRef
         );
         setCameraAnimationState(state);
     } else {
@@ -170,6 +186,10 @@ export default function Rig({
     }
 
     useFrame((_, delta) => {
+        if (ortho) {
+            console.log(modelRef.current);
+            camera.position.copy(orthoCameraPosition(modelRef));
+        }
         if (!ortho) {
             // camera pos = terrain height + bobbing
             let baseHeight =
