@@ -1,7 +1,7 @@
 import { useThree, useFrame, Camera } from '@react-three/fiber';
 import * as THREE from 'three';
-import { getHeight } from './Island';
-import { useEffect, useState, useRef} from 'react';
+import { getHeight, getNearestReachableCoordinate } from './Island';
+import { useEffect, useState, useRef } from 'react';
 
 
 /**
@@ -115,12 +115,17 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition) {
   * @param {} param0.boundingBoxes 
   * @param {THREE.Vector3} param0.orthoReturnPosition
  */
+
 export default function Rig({ ortho, cameraAnimationState, setCameraAnimationState, boundingBoxes, orthoReturnPosition }) {
+    
     const { camera, controls } = useThree();
     const [animationComplete, setAnimationComplete] = useState(false);
     const targetHeight = useRef(camera.position.y);
+    const isOnBoat = useRef(true); // if on boat
     const isMoving = useRef(false); // whether user is moving
     const bobbingPhase = useRef(0); // phase for sine wave
+    const adjustedHeight = 1.3;
+    const prevPosition = useRef({x: camera.position.x, y:camera.position.y + adjustedHeight, z:camera.position.z});
 
     let state;
     if (!cameraAnimationState) {
@@ -136,7 +141,7 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
     useFrame((_, delta) => {
         if (!ortho) {
             // camera pos = terrain height + bobbing
-            let baseHeight = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+            let baseHeight = adjustedHeight + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
             targetHeight.current = baseHeight;
 
             // lerp for smoother transitions
@@ -154,6 +159,19 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
                 // reset when not moving
                 bobbingPhase.current = 0;
                 camera.position.y = baseHeight;
+            }
+
+            console.log(baseHeight);
+
+            if (baseHeight <= adjustedHeight){
+                camera.position.set(prevPosition.current.x, prevPosition.current.y, prevPosition.current.z);
+            }
+            else {
+                prevPosition.current = {
+                    x: camera.position.x,
+                    y: camera.position.y,
+                    z: camera.position.z,
+                };
             }
         }
         const progress = (document.timeline.currentTime - state.animationStart) / animationDuration;
@@ -194,6 +212,13 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
         function onKeyDown(event) {
             if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) {
                 isMoving.current = true;
+            }
+            else if (['KeyE'].includes(event.code)){
+                if(isOnBoat.current){
+                    let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
+                    camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
+                    isOnBoat.current = false;
+                }
             }
         }
         function onKeyUp(event) {
