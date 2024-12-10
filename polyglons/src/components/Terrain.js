@@ -3,12 +3,12 @@ import Island, { getHeight } from './Island';
 import * as THREE from 'three';
 import { useState, useEffect, useRef } from 'react';
 import {
+    PARAMS,
     SCENE_DIMENSION,
     FALLOFF_DISTANCE,
     SEED,
     CLOSE_TESSELATION_DIVISOR,
     FAR_TESSELATION_DIVISOR,
-    NUM_ISLANDS,
 } from '../utils/constants';
 import { BIOME_COLORS } from '../utils/constants';
 import { Perlin3d } from '../polyglons-wasm/polyglons_wasm';
@@ -28,7 +28,7 @@ export function getIsland(x, z, boundingBoxes) {
     return null;
 }
 
-export default function Terrain({ params, setBoundingBoxes, boundingBoxes, cameraAnimationState, ortho }) {
+export default function Terrain({ setBoundingBoxes, cameraAnimationState, ortho }) {
     const group = new THREE.Group();
 
     const [islands, setIslands] = useState([]);
@@ -48,10 +48,10 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes, camer
         const { x, _, z } = camera.position;
 
         const newIslands = generateIslands(
-            NUM_ISLANDS,
+            PARAMS.numIslands,
             bounds,
-            params.minRadius,
-            params.maxRadius
+            PARAMS.minRadius,
+            PARAMS.maxRadius
         );
 
         setIslands(newIslands);
@@ -72,7 +72,6 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes, camer
         let tempBox = [];
         for (let i = 0; i < newIslands.length; i++) {
             let curIsland = Island(
-                params,
                 { x: newIslands[i].x, y: newIslands[i].y },
                 newIslands[i].biome,
                 initializeCounter[i],
@@ -94,7 +93,6 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes, camer
     for (let i = 0; i < islands.length; i++) {
         group.add(
             Island(
-                params,
                 { x: islands[i].x, y: islands[i].y },
                 islands[i].biome,
                 islandCounter[i],
@@ -147,13 +145,12 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes, camer
             for (let i = 0; i < islands.length; i++) {
                 if(ortho) islandCounter[i] = FAR_TESSELATION_DIVISOR;
                 let curIsland = Island(
-                    params,
                     { x: islands[i].x, y: islands[i].y },
                     islands[i].biome,
                     islandCounter[i],
                     islands[i].perlin3D,
                     islands[i].seed
-                ); 
+                );
                 group.add(curIsland);
             }
         }
@@ -207,7 +204,7 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes, camer
                     var biome = randomBiome(BIOME_COLORS).toString();
                     const perlin3D = new Perlin3d();
                     const seed = (i + SEED) * SEED;
-                    newIsland = { x, y, radius, biome, perlin3D, seed, params };
+                    newIsland = { x, y, radius, biome, perlin3D, seed };
                     usedCells.add(cellKey);
                     foundCell = true;
                 }

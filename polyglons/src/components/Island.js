@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {
+    PARAMS,
     BIOME_COLORS,
     BIOME_PEAKS,
     TESSELATION,
@@ -68,7 +69,6 @@ function getIslandObjects(
     resolution,
     biomeType,
     seed,
-    params,
     perlin3D
 ) {
     const objects = new THREE.Group();
@@ -81,7 +81,6 @@ function getIslandObjects(
                 y,
                 center,
                 biomeType,
-                params,
                 seed,
                 perlin3D
             );
@@ -102,14 +101,14 @@ function getIslandObjects(
     return objects;
 }
 
-export default function Island(params, center, biomeType, lod, perlin3D, seed) {
+export default function Island(center, biomeType, lod, perlin3D, seed) {
     function createTerrain() {
         let tesselationVal = TESSELATION / lod;
 
         const geometry = getPlaneGeometry(
             center.x,
             center.y,
-            params.maxRadius,
+            PARAMS.maxRadius,
             tesselationVal
         );
         const positions = geometry.attributes.position.array;
@@ -124,7 +123,6 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
                     y,
                     center,
                     biomeType,
-                    params,
                     seed,
                     perlin3D
                 );
@@ -149,11 +147,10 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
         const terrain = new THREE.Mesh(geometry, material);
         const objects = getIslandObjects(
             center,
-            params.maxRadius,
+            PARAMS.maxRadius,
             20,
             biomeType,
             seed,
-            params,
             perlin3D
         );
 
@@ -164,8 +161,8 @@ export default function Island(params, center, biomeType, lod, perlin3D, seed) {
     return newTerrain;
 }
 
-function calculateHeight(x, y, center, biomeType, params, factor, perlin3D) {
-    const G = 2.0 ** -params.persistence;
+function calculateHeight(x, y, center, biomeType, factor, perlin3D) {
+    const G = 2.0 ** -PARAMS.persistence;
 
     const distortScale = 0.1;
     const distortStrength = 2;
@@ -175,7 +172,7 @@ function calculateHeight(x, y, center, biomeType, params, factor, perlin3D) {
         y * distortScale,
         factor
     );
-    const distortedRadius = params.radius + distortNoise * distortStrength;
+    const distortedRadius = PARAMS.radius + distortNoise * distortStrength;
     const distFromCenter =
         Math.hypot(x - center.x, y - center.y) / distortedRadius;
 
@@ -188,19 +185,19 @@ function calculateHeight(x, y, center, biomeType, params, factor, perlin3D) {
     let normalization = 0;
     let total = 0;
 
-    for (let o = 0; o < params.octaves; o++) {
-        const xs = x / params.scale;
-        const ys = y / params.scale;
+    for (let o = 0; o < PARAMS.octaves; o++) {
+        const xs = x / PARAMS.scale;
+        const ys = y / PARAMS.scale;
         const noiseVal =
             perlin3D.sample(xs * frequency, ys * frequency, factor) * 0.5 + 0.5;
         total += noiseVal * amplitude;
         normalization += amplitude;
         amplitude *= G;
-        frequency *= params.lacunarity;
+        frequency *= PARAMS.lacunarity;
     }
 
     total /= normalization;
-    let final = Math.pow(total, params.exponentiation) * params.height;
+    let final = Math.pow(total, PARAMS.exponentiation) * PARAMS.height;
 
     // apply taper if it's towards the edge
     if (distFromCenter > 0.5) {
@@ -223,7 +220,6 @@ export function getHeight(x, y, boundingBoxes) {
 
     const center = { x: island.x, y: island.y };
     let biomeType = island.biome;
-    let params = island.params;
     let seed = island.seed;
     let perlin3D = island.perlin3D;
 
@@ -232,7 +228,6 @@ export function getHeight(x, y, boundingBoxes) {
         y,
         center,
         biomeType,
-        params,
         seed,
         perlin3D
     );

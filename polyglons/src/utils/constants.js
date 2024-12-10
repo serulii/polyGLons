@@ -43,8 +43,20 @@ export const BIOME_PEAKS = {
     BLOSSOM: [{ height: 3.0, variation: 1.2 }],
 };
 
+const PARAMS = {
+    scale: 10,
+    octaves: 8,
+    lacunarity: 2.0,
+    persistence: 1.0,
+    exponentiation: 3.0,
+    height: 5.5,
+    numIslands: 9,
+    minRadius: 10,
+    maxRadius: 12,
+    radius: 10,
+};
+
 const SCENE_DIMENSION = 100;
-const NUM_ISLANDS = 9;
 
 const BASE_HEIGHT = 1;
 const TESSELATION = 100;
@@ -60,8 +72,8 @@ const CLOSE_TESSELATION_DIVISOR = 1.5;
 const FAR_TESSELATION_DIVISOR = 4;
 
 export {
+    PARAMS,
     SCENE_DIMENSION,
-    NUM_ISLANDS,
     BASE_HEIGHT,
     TESSELATION,
     FALLOFF_DISTANCE,

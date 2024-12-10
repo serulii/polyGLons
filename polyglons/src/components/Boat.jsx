@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import React, { useRef, useEffect, useState } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { getIsland } from './Terrain.js';
-import { NUM_ISLANDS, SCENE_DIMENSION } from '../utils/constants.js';
+import { PARAMS, SCENE_DIMENSION } from '../utils/constants.js';
 
 const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
     const velocity = useRef({ x: 0, y: 0, z: 0 }); // speed
@@ -41,7 +41,7 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
     // boat positioning
     useEffect(() => {
         // bounding boxes not fully populated yet
-        if (boundingBoxes.length != NUM_ISLANDS * 2) {
+        if (boundingBoxes.length != PARAMS.numIslands * 2) {
             return;
         }
         
