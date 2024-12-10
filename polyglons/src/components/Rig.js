@@ -100,8 +100,8 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelR
         cam.position.copy(orthoCameraPosition(modelRef));
         cam.lookAt(0.0, 5.0, 0.0);
         cam.projectionMatrix.makeOrthographic(
-            (-30 * window.innerWidth) / window.innerHeight,
-            (30 * window.innerWidth) / window.innerHeight,
+            (-30 * window.innerHeight) / window.innerWidth,
+            (30 * window.innerHeight) / window.innerWidth,
             30,
             -30,
             -1000,
@@ -116,7 +116,7 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelR
         const projectionMatrix = new THREE.PerspectiveCamera().projectionMatrix;
         const cam = camera.clone();
         cam.position.copy(orthoReturnPosition);
-        cam.lookAt(0.0, 5.0, 0.0);
+        cam.lookAt(modelRef.current.position);
         end = {
             quaternion: cam.quaternion.clone(),
             position: cam.position.clone(),
@@ -137,6 +137,8 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelR
  * @param {function} param0.setCameraAnimationState
  * @param {} param0.boundingBoxes
  * @param {THREE.Vector3} param0.orthoReturnPosition
+ * @param {THREE.Vector3} param0.orthoReturnLooking
+ *
  */
 
 export default function Rig({
@@ -147,7 +149,7 @@ export default function Rig({
     setCameraAnimationState,
     boundingBoxes,
     orthoReturnPosition,
-    modelRef
+    modelRef,
 }) {
     const { camera, controls } = useThree();
     const [animationComplete, setAnimationComplete] = useState(false);
@@ -178,7 +180,7 @@ export default function Rig({
             camera.clone(),
             false,
             orthoReturnPosition,
-            modelRef
+            modelRef,
         );
         setCameraAnimationState(state);
     } else {
