@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import React, { useRef, useEffect, useState } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { getIsland } from './Terrain.js';
@@ -77,7 +77,6 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
         do {
             x = Math.random() * SCENE_DIMENSION - SCENE_DIMENSION / 2;
             z = Math.random() * SCENE_DIMENSION - SCENE_DIMENSION / 2;
-            console.log(x, z, getIsland(x, z, boundingBoxes));
         } while (getIsland(x, z, boundingBoxes));
 
         scene.position.set(x, 0, z);
@@ -148,6 +147,25 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
             }
         }
     });
+
+    const {gl} = useThree();
+    gl.shadowMap.enabled = true;
+    console.log()
+    modelRef.castShadow = true;
+    scene.castShadow = true;
+
+    scene.traverse((o) => {
+        o.castShadow = true;
+        o.receiveShadow = true;
+    });
+
+    if (modelRef.current) {
+        modelRef.current.traverse(o => {
+            o.castShadow = true;
+            o.receiveShadow = true;
+        })
+    }
+
     return initialized ? <primitive ref={modelRef} object={scene} /> : null;
 };
 
