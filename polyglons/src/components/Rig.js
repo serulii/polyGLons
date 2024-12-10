@@ -126,21 +126,6 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
     const adjustedHeight = 1.3;
     const prevPosition = useRef({x: camera.position.x, y:camera.position.y + adjustedHeight, z:camera.position.z});
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'e') { 
-            let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
-            camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
-        }
-    };
-
-     useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    });
-    
     let state;
     if (!cameraAnimationState) {
         state = makeAnimationState(ortho, camera.clone(), true, orthoReturnPosition); 
@@ -155,7 +140,7 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
     useFrame((_, delta) => {
         if (!ortho) {
             // camera pos at terrain height + bobbing
-            const baseHeight = 1 + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
+            const baseHeight = adjustedHeight + Math.max(0.0, getHeight(camera.position.x, camera.position.z, boundingBoxes));
             if (isMoving.current) {
                 const frequency = 1; // bobbing frequency
                 const amplitude = 0.1; // bobbing height
@@ -168,6 +153,19 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
                 // reset when not moving
                 bobbingPhase.current = 0;
                 camera.position.y = baseHeight;
+            }
+
+            console.log(baseHeight);
+
+            if (baseHeight <= adjustedHeight){
+                camera.position.set(prevPosition.current.x, prevPosition.current.y, prevPosition.current.z);
+            }
+            else {
+                prevPosition.current = {
+                    x: camera.position.x,
+                    y: camera.position.y,
+                    z: camera.position.z,
+                };
             }
         }
         const progress = (document.timeline.currentTime - state.animationStart) / animationDuration;
@@ -208,6 +206,10 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
         function onKeyDown(event) {
             if (['KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(event.code)) {
                 isMoving.current = true;
+            }
+            else if (['KeyE'].includes(event.code)){
+                let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
+                camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
             }
         }
         function onKeyUp(event) {
