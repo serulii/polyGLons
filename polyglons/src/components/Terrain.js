@@ -12,6 +12,7 @@ import {
 } from '../utils/constants';
 import { BIOME_COLORS } from '../utils/constants';
 import { Perlin3d } from '../polyglons-wasm/polyglons_wasm';
+import { animationInProgress } from './Rig';
 
 export function getIsland(x, z, boundingBoxes) {
     for (let i = 0; i < boundingBoxes.length; i += 2) {
@@ -27,7 +28,7 @@ export function getIsland(x, z, boundingBoxes) {
     return null;
 }
 
-export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
+export default function Terrain({ params, setBoundingBoxes, boundingBoxes, cameraAnimationState, ortho }) {
     const group = new THREE.Group();
 
     const [islands, setIslands] = useState([]);
@@ -59,6 +60,7 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
             const euclideanDistance = Math.sqrt(
                 (x - island.x) ** 2 + (z - island.y) ** 2
             );
+            if(ortho) return FAR_TESSELATION_DIVISOR;
             return euclideanDistance <= FALLOFF_DISTANCE
                 ? CLOSE_TESSELATION_DIVISOR
                 : FAR_TESSELATION_DIVISOR;
@@ -103,13 +105,15 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
     }
 
     // useRef to prevent rerendering on change
-    const prevPosition = useRef({ x: camera.position.x, y: camera.position.y });
+    const prevPosition = useRef({ x: camera.position.x, y: camera.position.y, z:camera.position.z });
+    const transition = useRef(false);
 
     useFrame(() => {
+        
         const { x, y, z } = camera.position;
         let changed = false;
 
-        if (x != prevPosition.current.x || z != prevPosition.current.z) {
+        if ((x != prevPosition.current.x || z != prevPosition.current.z) && !animationInProgress(cameraAnimationState) && !ortho) {
             prevPosition.current = { x, y, z };
 
             const newCounter = islands.map((island) => {
@@ -130,9 +134,18 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
             }
         }
 
-        if (changed) {
+        if (animationInProgress(cameraAnimationState) && ortho && !transition.current) {
+            transition.current = true;
+        }
+
+        else if (!animationInProgress(cameraAnimationState) && transition.current){
+            transition.current = false;
+        }
+
+        if ((changed && !ortho) || (ortho && transition.current && islandCounter.reduce((accumulator, currentValue) => accumulator + currentValue, 0) != islandCounter.length * FAR_TESSELATION_DIVISOR)) {
             group.clear();
             for (let i = 0; i < islands.length; i++) {
+                if(ortho) islandCounter[i] = FAR_TESSELATION_DIVISOR;
                 let curIsland = Island(
                     params,
                     { x: islands[i].x, y: islands[i].y },
@@ -140,7 +153,7 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
                     islandCounter[i],
                     islands[i].perlin3D,
                     islands[i].seed
-                );
+                ); 
                 group.add(curIsland);
             }
         }

@@ -130,6 +130,8 @@ function Scene() {
                     params={params}
                     setBoundingBoxes={setBoundingBoxes}
                     boundingBoxes={boundingBoxes}
+                    cameraAnimationState={cameraAnimationState}
+                    ortho={ortho}
                 />
                 <Water />
                 {<Skybox cameraAnimationState={cameraAnimationState} />}

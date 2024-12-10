@@ -8,7 +8,7 @@ import {
 } from '../utils/constants';
 import { getIsland } from './Terrain';
 import { generateObj } from '../object/objectGen';
-import { SceneNode } from 'three/webgpu';
+import { animationInProgress } from './Rig';
 
 function getColor(height, biomeType) {
     const colors = BIOME_COLORS[biomeType];
@@ -105,6 +105,7 @@ function getIslandObjects(
 export default function Island(params, center, biomeType, lod, perlin3D, seed) {
     function createTerrain() {
         let tesselationVal = TESSELATION / lod;
+
         const geometry = getPlaneGeometry(
             center.x,
             center.y,
