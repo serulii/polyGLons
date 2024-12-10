@@ -89,7 +89,7 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes, camer
             tempBox.push(newIslands[i]);
         }
         setBoundingBoxes(tempBox);
-    }, [params.minRadius, params.maxRadius]);
+    }, []);
 
     for (let i = 0; i < islands.length; i++) {
         group.add(
