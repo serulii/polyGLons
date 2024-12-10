@@ -121,6 +121,7 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
     const { camera, controls } = useThree();
     const [animationComplete, setAnimationComplete] = useState(false);
 
+    const isOnBoat = useRef(true); // if on boat
     const isMoving = useRef(false); // whether user is moving
     const bobbingPhase = useRef(0); // phase for sine wave
     const adjustedHeight = 1.3;
@@ -208,8 +209,11 @@ export default function Rig({ ortho, cameraAnimationState, setCameraAnimationSta
                 isMoving.current = true;
             }
             else if (['KeyE'].includes(event.code)){
-                let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
-                camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
+                if(isOnBoat.current){
+                    let closestCoords = getNearestReachableCoordinate(camera.position.x, camera.position.y, boundingBoxes);
+                    camera.position.set(closestCoords[0], getHeight(closestCoords[0], closestCoords[1], boundingBoxes) + adjustedHeight, closestCoords[1]);
+                    isOnBoat.current = false;
+                }
             }
         }
         function onKeyUp(event) {
