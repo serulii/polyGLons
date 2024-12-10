@@ -2,6 +2,7 @@ import { useThree, useFrame, Camera } from '@react-three/fiber';
 import * as THREE from 'three';
 import { getHeight, getNearestReachableCoordinate } from './Island';
 import { useEffect, useState, useRef } from 'react';
+import { cameraNear } from 'three/webgpu';
 
 /**
  * @typedef {Object} AnimationState
@@ -64,6 +65,8 @@ export function animationInProgress(pair) {
     );
 }
 
+const orthoCameraOffset = new THREE.Vector3(20.0, 10.0, -20.0);
+
 /**
  * 
  * @param {} modelRef 
@@ -74,7 +77,17 @@ function orthoCameraPosition(modelRef) {
     if (modelRef.current) {
         boatPos = modelRef.current.position.clone();
     }
-    return boatPos.add(new THREE.Vector3(20.0, 10.0, -20.0));
+    return boatPos.add(orthoCameraOffset);
+}
+
+/**
+ * 
+ */
+function getOrthoQuaternion() {
+    const camera = new THREE.OrthographicCamera();
+    camera.position.copy(orthoCameraOffset);
+    camera.lookAt(0.0, 0.0, 0.0);
+    return camera.quaternion;
 }
 
 /**
@@ -98,7 +111,7 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelR
     if (ortho) {
         const cam = camera.clone();
         cam.position.copy(orthoCameraPosition(modelRef));
-        cam.lookAt(0.0, 5.0, 0.0);
+        cam.setRotationFromQuaternion(getOrthoQuaternion());
         cam.projectionMatrix.makeOrthographic(
             (-30 * window.innerWidth) / window.innerHeight,
             (30 * window.innerWidth) / window.innerHeight,
@@ -113,7 +126,10 @@ function makeAnimationState(ortho, camera, appStart, orthoReturnPosition, modelR
             projectionMatrix: cam.projectionMatrix.clone(),
         };
     } else {
-        const projectionMatrix = new THREE.PerspectiveCamera().projectionMatrix;
+        const projectionMatrix = new THREE.PerspectiveCamera(
+            100,
+            window.innerWidth / window.innerHeight,
+        ).projectionMatrix;
         const cam = camera.clone();
         cam.position.copy(orthoReturnPosition);
         cam.lookAt(modelRef.current.position);
@@ -188,10 +204,6 @@ export default function Rig({
     }
 
     useFrame((_, delta) => {
-        if (ortho) {
-            console.log(modelRef.current);
-            camera.position.copy(orthoCameraPosition(modelRef));
-        }
         if (!ortho) {
             // camera pos = terrain height + bobbing
             let baseHeight =
@@ -245,6 +257,10 @@ export default function Rig({
             (document.timeline.currentTime - state.animationStart) /
             animationDuration;
 
+        
+        
+        let animationInProgress = false;
+    
         if (0 <= progress) {
             if (progress <= 1.0) {
                 const curve = ortho
@@ -272,6 +288,7 @@ export default function Rig({
                         state.end.projectionMatrix
                     )
                 );
+                animationInProgress = true;
             } else if (!animationComplete) {
                 camera.position.copy(state.end.position);
                 camera.quaternion.copy(state.end.quaternion);
@@ -280,8 +297,15 @@ export default function Rig({
                 }
                 camera.projectionMatrix.copy(state.end.projectionMatrix);
                 setAnimationComplete(true);
-            }
+                animationInProgress = true;
+            } 
         }
+
+        if (ortho && !animationInProgress) {
+            camera.position.copy(orthoCameraPosition(modelRef));
+            camera.quaternion.copy(getOrthoQuaternion());
+        }
+
     });
 
     useEffect(() => {
