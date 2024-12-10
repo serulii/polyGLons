@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { useThree, useFrame } from '@react-three/fiber';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
-import React, { useRef, useEffect } from 'react';
+import { useFrame } from '@react-three/fiber';
+import React, { useRef, useEffect, useState } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { getIsland } from './Terrain.js';
+import { NUM_ISLANDS, SCENE_DIMENSION } from '../utils/constants.js';
 
 const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
     const velocity = useRef({ x: 0, y: 0, z: 0 }); // speed
@@ -11,6 +11,9 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
     const damping = 0.9; // dampening factor to slow down
     const activeKeys = useRef({}); // active keys map
     const targetQuaternion = useRef(new THREE.Quaternion()); // use quaternions for shortest path (otherwise boat may rotate the wrong way)
+    const [initialized, setInitialized] = useState(false);
+    const { scene } = useGLTF('./models/boat.gltf');
+    scene.scale.set(0.2, 0.2, 0.2);
 
     // key press handling
     useEffect(() => {
@@ -34,6 +37,25 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
             window.removeEventListener('keyup', handleKeyUp);
         };
     }, []);
+
+    // boat positioning
+    useEffect(() => {
+        // bounding boxes not fully populated yet
+        if (boundingBoxes.length != NUM_ISLANDS * 2) {
+            return;
+        }
+        
+        // randomly position boat
+        let x, z;
+        do {
+            x = Math.random() * SCENE_DIMENSION - SCENE_DIMENSION / 2;
+            z = Math.random() * SCENE_DIMENSION - SCENE_DIMENSION / 2;
+            console.log(x, z, getIsland(x, z, boundingBoxes));
+        } while (getIsland(x, z, boundingBoxes));
+
+        scene.position.set(x, 0, z);
+        setInitialized(true);
+    }, [boundingBoxes]);
 
     // rotation and velocity calculation
     useFrame(() => {
@@ -96,10 +118,7 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
         }
     });
 
-    const { scene } = useGLTF('./models/boat.gltf');
-    scene.scale.set(0.2, 0.2, 0.2);
-
-    return <primitive ref={modelRef} object={scene} />;
-};
+    return initialized ? <primitive ref={modelRef} object={scene} /> : null;
+}
 
 export default BoatControls;

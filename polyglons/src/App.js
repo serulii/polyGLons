@@ -43,7 +43,6 @@ function Scene() {
         height: 5.5,
         minRadius: 10,
         maxRadius: 12,
-        numIslands: 5,
         radius: 10,
     });
 
@@ -93,12 +92,6 @@ function Scene() {
             .name('maxRadius')
             .onChange((value) =>
                 setParams((prev) => ({ ...prev, maxRadius: value }))
-            );
-
-        gui.add(params, 'numIslands', 0, 100)
-            .name('numIslands')
-            .onChange((value) =>
-                setParams((prev) => ({ ...prev, numIslands: value }))
             );
 
         return () => gui.destroy();
@@ -151,9 +144,6 @@ function Scene() {
                             boundingBoxes={boundingBoxes}
                  />
             </Canvas>
-            <button className="button" onClick={() => setOrtho(!ortho)}>
-                Change View
-            </button>
         </>
     );
 }

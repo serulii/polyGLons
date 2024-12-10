@@ -8,6 +8,7 @@ import {
     SEED,
     CLOSE_TESSELATION_DIVISOR,
     FAR_TESSELATION_DIVISOR,
+    NUM_ISLANDS,
 } from '../utils/constants';
 import { BIOME_COLORS } from '../utils/constants';
 import { Perlin3d } from '../polyglons-wasm/polyglons_wasm';
@@ -43,10 +44,10 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
 
     //initializes the islandCounter, 1 if in distance, 0 if not
     useEffect(() => {
-        const { x, y, z } = camera.position;
+        const { x, _, z } = camera.position;
 
         const newIslands = generateIslands(
-            params.numIslands,
+            NUM_ISLANDS,
             bounds,
             params.minRadius,
             params.maxRadius
@@ -86,7 +87,7 @@ export default function Terrain({ params, setBoundingBoxes, boundingBoxes }) {
             tempBox.push(newIslands[i]);
         }
         setBoundingBoxes(tempBox);
-    }, [params.numIslands, params.minRadius, params.maxRadius]);
+    }, [params.minRadius, params.maxRadius]);
 
     for (let i = 0; i < islands.length; i++) {
         group.add(

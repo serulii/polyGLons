@@ -187,7 +187,6 @@ export default function Rig({
 
     useFrame((_, delta) => {
         if (ortho) {
-            console.log(modelRef.current);
             camera.position.copy(orthoCameraPosition(modelRef));
         }
         if (!ortho) {
