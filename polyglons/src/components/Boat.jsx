@@ -88,7 +88,11 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
                 !getIsland(
                     modelRef.current.position.x + vel.x,
                     modelRef.current.position.z + vel.z,
+<<<<<<< HEAD
                     boundingBoxesRef.current
+=======
+                    boundingBoxes
+>>>>>>> 6ae4043 (boat collision and rig ortho)
                 )
             ) {
                 // update the boat's position
