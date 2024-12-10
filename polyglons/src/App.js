@@ -1,10 +1,9 @@
 import './css/App.css';
 import './css/style.css';
 import React from 'react';
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import {
     FlyControls,
-    PointerLockControls,
     FirstPersonControls,
 } from '@react-three/drei';
 import * as THREE from 'three';
@@ -14,8 +13,6 @@ import initWasm from './polyglons-wasm/polyglons_wasm';
 import BoatControls from './components/Boat.jsx';
 import Water from './components/Water';
 import Rig from './components/Rig';
-
-import * as dat from 'dat.gui';
 import Terrain from './components/Terrain';
 import Controls from './components/Controls';
 
@@ -34,19 +31,6 @@ import Controls from './components/Controls';
 // playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
 
 function Scene() {
-    const params = {
-        scale: 10,
-        octaves: 8,
-        lacunarity: 2.0,
-        persistence: 1.0,
-        exponentiation: 3.0,
-        height: 5.5,
-        minRadius: 10,
-        maxRadius: 12,
-        radius: 10,
-    };
-
-
     const [orthoReturnPosition, setOrthoReturnPosition] = useState(
         new THREE.Vector3(20.0, 1.0, -20.0)
     );
@@ -69,17 +53,15 @@ function Scene() {
                     orthoReturnPosition={orthoReturnPosition}
                     modelRef={modelRef}
                 />
-                <ambientLight intensity={0} />
                 <directionalLight intensity={1} />
                 <hemisphereLight
                     intensity={1}
-                    groundColor={'ffd466'}
-                    skyColor={'170fff'}
+                    groundColor={new THREE.Color(0xffd466)}
+                    skyColor={new THREE.Color(0x170fff)}
+                    direction={new THREE.Vector3(-0.5, 0.0, 0.0)}
                 ></hemisphereLight>
                 <Terrain
-                    params={params}
                     setBoundingBoxes={setBoundingBoxes}
-                    boundingBoxes={boundingBoxes}
                     cameraAnimationState={cameraAnimationState}
                     ortho={ortho}
                 />
