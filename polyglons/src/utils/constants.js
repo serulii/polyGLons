@@ -51,12 +51,12 @@ const PARAMS = {
     exponentiation: 3.0,
     height: 5.5,
     numIslands: 9,
-    minRadius: 10,
-    maxRadius: 12,
-    radius: 10,
+    minRadius: 15,
+    maxRadius: 20,
+    radius: 15,
 };
 
-const SCENE_DIMENSION = 100;
+const SCENE_DIMENSION = 150;
 
 const BASE_HEIGHT = 1;
 const TESSELATION = 100;
