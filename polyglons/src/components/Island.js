@@ -141,6 +141,7 @@ export default function Island(center, biomeType, lod, perlin3D, seed) {
             side: THREE.BackSide,
         });
         const terrain = new THREE.Mesh(geometry, material);
+        terrain.castShadow = true;
         const objects = getIslandObjects(
             center,
             PARAMS.maxRadius,

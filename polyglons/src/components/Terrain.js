@@ -28,11 +28,12 @@ export function getIsland(x, z, boundingBoxes) {
     return null;
 }
 
-export default function Terrain({ setBoundingBoxes, cameraAnimationState, ortho }) {
+export default function Terrain({ setBoundingBoxes, cameraAnimationState, ortho, modelRef }) {
     const group = new THREE.Group();
 
     const [islands, setIslands] = useState([]);
     const [islandCounter, setIslandCounter] = useState([]);
+    const [counter, setCounter] = useState(true);
 
     let { camera } = useThree();
 
@@ -42,6 +43,19 @@ export default function Terrain({ setBoundingBoxes, cameraAnimationState, ortho 
         yMin: -SCENE_DIMENSION / 2,
         yMax: SCENE_DIMENSION / 2,
     };
+
+    useEffect(() => {
+        function onKeyDown(event) {
+            if (['Space'].includes(event.code)) {
+                setCounter(!counter);
+            }
+        }
+        window.addEventListener('keydown', onKeyDown);
+        
+        return () => {
+            window.removeEventListener('keydown', onKeyDown);
+        };
+    });
 
     //initializes the islandCounter, 1 if in distance, 0 if not
     useEffect(() => {
@@ -88,7 +102,7 @@ export default function Terrain({ setBoundingBoxes, cameraAnimationState, ortho 
             tempBox.push(newIslands[i]);
         }
         setBoundingBoxes(tempBox);
-    }, []);
+    }, [counter]);
 
     for (let i = 0; i < islands.length; i++) {
         group.add(

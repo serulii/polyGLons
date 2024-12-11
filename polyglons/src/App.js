@@ -53,17 +53,21 @@ function Scene() {
                     orthoReturnPosition={orthoReturnPosition}
                     modelRef={modelRef}
                 />
-                <directionalLight intensity={1} />
+                <directionalLight 
+                    direction={new THREE.Vector3(-0.5, 5.0, 0.0)}
+                    castShadow={true}
+                    intensity={1} 
+                />
                 <hemisphereLight
                     intensity={1}
                     groundColor={new THREE.Color(0xffd466)}
                     skyColor={new THREE.Color(0x170fff)}
-                    direction={new THREE.Vector3(-0.5, 0.0, 0.0)}
                 ></hemisphereLight>
                 <Terrain
                     setBoundingBoxes={setBoundingBoxes}
                     cameraAnimationState={cameraAnimationState}
                     ortho={ortho}
+                    modelRef={modelRef}
                 />
                 <Water 
                     useBoatPos={ortho}
@@ -72,8 +76,7 @@ function Scene() {
                 {<Skybox cameraAnimationState={cameraAnimationState} />}
                 {!ortho && (
                     <>
-                        <FirstPersonControls makeDefault lookSpeed={0.2} />
-                        <FlyControls autoForward={false} movementSpeed={2} />
+                        <FirstPersonControls makeDefault lookSpeed={0.2} movementSpeed={1} />
                     </>
                 )}
                 <BoatControls ortho={ortho}

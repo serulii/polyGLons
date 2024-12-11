@@ -71,5 +71,5 @@ export default function ({ useBoatPos, modelRef }) {
         updateWater();
     });
 
-    return <mesh geometry={geometry} material={material} />;
+    return <mesh geometry={geometry} receiveShadow={true} castShadow={true} material={material} />;
 }
