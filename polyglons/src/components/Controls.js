@@ -31,7 +31,7 @@ export default function Controls() {
     return (
         <>
         <div className={`tutorial ${showWelcome ? "visible" : "hidden"}`}>
-            <p>Welcome to Mystic Islands!</p>
+            <p>Welcome to Island Hopper!</p>
             <p>Get ready for an adventure...</p>
         </div>
         <div className={`tutorial ${showTutorial ? "visible" : "hidden"}`}>
