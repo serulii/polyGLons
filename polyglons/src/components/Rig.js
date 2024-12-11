@@ -132,7 +132,7 @@ function makeAnimationState(
         };
     } else {
         const projectionMatrix = new THREE.PerspectiveCamera(
-            70,
+            40, // FOV
             window.innerWidth / window.innerHeight
         ).projectionMatrix;
         const cam = camera.clone();

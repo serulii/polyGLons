@@ -146,22 +146,28 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
     });
 
     const { gl } = useThree();
-    gl.shadowMap.enabled = true;
-    console.log();
-    modelRef.castShadow = true;
-    scene.castShadow = true;
+    useEffect(() => {
+        gl.shadowMap.enabled = true;
+        modelRef.castShadow = true;
+        scene.castShadow = true;
 
-    scene.traverse((o) => {
-        o.castShadow = true;
-        o.receiveShadow = true;
-    });
-
-    if (modelRef.current) {
-        modelRef.current.traverse((o) => {
-            o.castShadow = true;
-            o.receiveShadow = true;
+        scene.traverse((o) => {
+            if (o.isMesh) {
+                o.castShadow = true;
+                o.receiveShadow = true;
+            }
         });
-    }
+
+        if (modelRef.current) {
+            modelRef.current.traverse((o) => {
+                if (o.isMesh) {
+                    o.castShadow = true;
+                    o.receiveShadow = true;
+                }
+            });
+        }
+    }, [gl, scene, modelRef]);
+    // console.log(scene);
 
     return initialized ? <primitive ref={modelRef} object={scene} /> : null;
 };

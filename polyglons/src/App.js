@@ -2,10 +2,7 @@ import './css/App.css';
 import './css/style.css';
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import {
-    FlyControls,
-    FirstPersonControls,
-} from '@react-three/drei';
+import { FlyControls, FirstPersonControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useEffect, useState, useRef } from 'react';
 import Skybox from './components/Skybox';
@@ -28,7 +25,7 @@ function Scene() {
     return (
         <>
             <Controls />
-            <Canvas>
+            <Canvas shadows={true}>
                 <Rig
                     ortho={ortho}
                     setOrtho={setOrtho}
@@ -39,10 +36,18 @@ function Scene() {
                     orthoReturnPosition={orthoReturnPosition}
                     modelRef={modelRef}
                 />
-                <directionalLight 
+                <directionalLight
                     direction={new THREE.Vector3(-0.5, 5.0, 0.0)}
                     castShadow={true}
-                    intensity={1} 
+                    intensity={1}
+                    shadow-mapSize-width={1024} // Higher resolution shadows
+                    shadow-mapSize-height={1024}
+                    shadow-camera-near={0.5} // Ensure the light's near and far planes encompass the objects
+                    shadow-camera-far={500}
+                    shadow-camera-left={-10}
+                    shadow-camera-right={10}
+                    shadow-camera-top={10}
+                    shadow-camera-bottom={-10}
                 />
                 <hemisphereLight
                     intensity={1}
@@ -55,20 +60,22 @@ function Scene() {
                     ortho={ortho}
                     modelRef={modelRef}
                 />
-                <Water 
-                    useBoatPos={ortho}
-                    modelRef={modelRef}
-                />
+                <Water useBoatPos={ortho} modelRef={modelRef} />
                 {<Skybox cameraAnimationState={cameraAnimationState} />}
                 {!ortho && (
                     <>
-                        <FirstPersonControls makeDefault lookSpeed={0.2} movementSpeed={1} />
+                        <FirstPersonControls
+                            makeDefault
+                            lookSpeed={0.2}
+                            movementSpeed={1}
+                        />
                     </>
                 )}
-                <BoatControls ortho={ortho}
-                            modelRef={modelRef}
-                            boundingBoxes={boundingBoxes}
-                 />
+                <BoatControls
+                    ortho={ortho}
+                    modelRef={modelRef}
+                    boundingBoxes={boundingBoxes}
+                />
             </Canvas>
         </>
     );

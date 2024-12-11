@@ -132,8 +132,9 @@ export default function Island(center, biomeType, lod, perlin3D, seed) {
             'color',
             new THREE.Float32BufferAttribute(colors, 4)
         );
+        geometry.computeVertexNormals(); // recompute normals for lighting?
         geometry.attributes.position.needsUpdate = true;
-        const material = new THREE.MeshLambertMaterial({
+        const material = new THREE.MeshStandardMaterial({
             vertexColors: true,
             wireframe: false,
             flatShading: true,
@@ -142,6 +143,7 @@ export default function Island(center, biomeType, lod, perlin3D, seed) {
         });
         const terrain = new THREE.Mesh(geometry, material);
         terrain.castShadow = true;
+        terrain.receiveShadow = true;
         const objects = getIslandObjects(
             center,
             PARAMS.maxRadius,
@@ -220,14 +222,7 @@ export function getHeight(x, y, boundingBoxes) {
     let seed = island.seed;
     let perlin3D = island.perlin3D;
 
-    const final = calculateHeight(
-        x,
-        y,
-        center,
-        biomeType,
-        seed,
-        perlin3D
-    );
+    const final = calculateHeight(x, y, center, biomeType, seed, perlin3D);
     return final;
 }
 
