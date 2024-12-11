@@ -16,20 +16,6 @@ import Rig from './components/Rig';
 import Terrain from './components/Terrain';
 import Controls from './components/Controls';
 
-// https://sbcode.net/react-three-fiber/gltfloader/
-// https://threejs.org/docs/#api/en/objects/Mesh
-// https://threejs.org/docs/#api/en/core/BufferGeometry
-// https://threejs.org/docs/#api/en/loaders/ObjectLoader
-// https://threejs.org/docs/#examples/en/loaders/OBJLoader
-// https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
-// const texture = useLoader(THREE.TextureLoader, "./daniel_ritchie_face.jpg");
-// https://sbcode.net/react-three-fiber/use-loader/
-
-// first person camera https://www.youtube.com/watch?v=oqKzxPMLWxo
-// third person camera https://www.youtube.com/watch?v=UuNPHOJ_V5o
-// music https://www.youtube.com/watch?v=T43D0M8kHFw
-// playlist https://www.youtube.com/watch?v=oKJ2EZnnZRE&list=PL93EE6DF71E5913A7
-
 function Scene() {
     const [orthoReturnPosition, setOrthoReturnPosition] = useState(
         new THREE.Vector3(20.0, 1.0, -20.0)

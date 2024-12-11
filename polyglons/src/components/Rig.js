@@ -2,7 +2,6 @@ import { useThree, useFrame, Camera } from '@react-three/fiber';
 import * as THREE from 'three';
 import { getHeight, getNearestReachableCoordinate } from './Island';
 import { useEffect, useState, useRef } from 'react';
-import { cameraNear } from 'three/webgpu';
 
 /**
  * @typedef {Object} AnimationState

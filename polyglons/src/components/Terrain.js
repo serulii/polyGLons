@@ -1,5 +1,5 @@
 import { useThree, useFrame } from '@react-three/fiber';
-import Island, { getHeight } from './Island';
+import Island from './Island';
 import * as THREE from 'three';
 import { useState, useEffect, useRef } from 'react';
 import {
