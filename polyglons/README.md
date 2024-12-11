@@ -47,7 +47,6 @@ Dependencies are marked unused if they are included in the source code (e.g. bec
 * `react-dom` helper package for `react`
 * `react-scripts` helper scripts for react development
 * `seedrandom` seedable random number generator for terrain generation
-* `simplex-noise` unused
 * `web-vitals` unused
 
 ### Rust dependencies
