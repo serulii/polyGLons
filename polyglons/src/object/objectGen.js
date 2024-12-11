@@ -13,8 +13,8 @@ export async function loadModel(path) {
 // load models for different biome types
 const models = {
     FOREST: [
-        await loadModel('/models/tree.glb'),
-        await loadModel('/models/tree2.glb'),
+        await loadModel('models/tree.glb'),
+        await loadModel('models/tree2.glb'),
         await loadModel('models/rock1.gltf'),
         await loadModel('models/rock2.gltf'),
         await loadModel('models/rock3.gltf'),
@@ -25,10 +25,10 @@ const models = {
         await loadModel('/models/prickly_pear.gltf'),
         await loadModel('models/rock3_red.gltf'),
     ],
-    SNOWY: [await loadModel('/models/snowy_tree_1.gltf')],
+    SNOWY: [await loadModel('models/snowy_tree_1.gltf')],
     BLOSSOM: [
-        await loadModel('/models/sakura_1.gltf'),
-        await loadModel('/models/petals.gltf'),
+        await loadModel('models/sakura_1.gltf'),
+        await loadModel('models/petals.gltf'),
     ],
 };
 

@@ -67,6 +67,7 @@ function Scene() {
                     setBoundingBoxes={setBoundingBoxes}
                     cameraAnimationState={cameraAnimationState}
                     ortho={ortho}
+                    modelRef={modelRef}
                 />
                 <Water 
                     useBoatPos={ortho}
@@ -75,8 +76,7 @@ function Scene() {
                 {<Skybox cameraAnimationState={cameraAnimationState} />}
                 {!ortho && (
                     <>
-                        <FirstPersonControls makeDefault lookSpeed={0.2} />
-                        <FlyControls autoForward={false} movementSpeed={2} />
+                        <FirstPersonControls makeDefault lookSpeed={0.2} movementSpeed={1} />
                     </>
                 )}
                 <BoatControls ortho={ortho}

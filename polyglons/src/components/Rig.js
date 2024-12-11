@@ -133,7 +133,7 @@ function makeAnimationState(
         };
     } else {
         const projectionMatrix = new THREE.PerspectiveCamera(
-            45,
+            70,
             window.innerWidth / window.innerHeight
         ).projectionMatrix;
         const cam = camera.clone();
@@ -179,7 +179,7 @@ export default function Rig({
     const isOnBoat = useRef(true); // if on boat
     const isMoving = useRef(false); // whether user is moving
     const bobbingPhase = useRef(0); // phase for sine wave
-    const adjustedHeight = 1.3;
+    const adjustedHeight = 0.8;
     const prevPosition = useRef({
         x: camera.position.x,
         y: camera.position.y + adjustedHeight,
@@ -233,7 +233,7 @@ export default function Rig({
             );
             if (isMoving.current) {
                 const frequency = 1; // bobbing frequency
-                const amplitude = 0.02; // bobbing height
+                const amplitude = 0.015; // bobbing height
 
                 bobbingPhase.current += delta * frequency * Math.PI * 2;
                 const offset = Math.sin(bobbingPhase.current) * amplitude;
