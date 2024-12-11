@@ -62,7 +62,7 @@ export default function Controls() {
             <AudioPlayer />
             <button onClick={handleShowTutorial} className="control-button">
                 <img
-                    src="/icons/question-mark.svg"
+                    src="icons/question-mark.svg"
                     alt="Change song"
                     className="icon"
                 />

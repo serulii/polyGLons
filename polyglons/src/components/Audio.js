@@ -54,14 +54,14 @@ const AudioPlayer = () => {
     <>
     <button className="control-button" onClick={changeSong}>
       <img
-        src="/icons/next-song.svg"
+        src="icons/next-song.svg"
         alt="Change song"
         className="icon"
       />
     </button>
     <button className="control-button" onClick={toggleVolume}>
       <img 
-        src={volumeOn ? "/icons/sound-on.svg" : "/icons/sound-off.svg"}
+        src={volumeOn ? "icons/sound-on.svg" : "icons/sound-off.svg"}
         alt="Toggle volume"
         className="icon"
       />

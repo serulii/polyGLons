@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Gaegu&display=swap');
-
 .tutorial {
     position: absolute;
     z-index: 10;
@@ -74,4 +72,11 @@
 .icon {
     width: 2rem;
     height: 2rem;
+}
+
+@font-face {
+    font-family: 'Gaegu';
+    src: url('Gaegu-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
