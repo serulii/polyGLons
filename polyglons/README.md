@@ -8,8 +8,8 @@ Install the dependencies.
 npm install
 ```
 
-The following command compiles and replaces the contents of `src/polyglons-wasm`
-with the artifacts. Make sure to run this command and commit the results.
+The following command compiles the Rust code, and replaces the contents of `src/polyglons-wasm`
+with the artifacts. Make sure to run this command and commit the results if you modify any Rust code!
 
 ```
 npm run build-wasm
