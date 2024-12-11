@@ -2,14 +2,25 @@ import AudioPlayer from "./Audio";
 import { useState, useEffect } from "react";
 
 export default function Controls() {
-    const [showTutorial, setShowTutorial] = useState(true);
+    const [showWelcome, setShowWelcome] = useState(true);
+    const [showTutorial, setShowTutorial] = useState(false);
+
+    useEffect(() => {
+        const welcomeTimer = setTimeout(() => {
+            setShowWelcome(false);
+            setShowTutorial(true);
+        }, 5000); // 5s
+
+        return () => clearTimeout(welcomeTimer);
+    }, []);
 
     useEffect(() => {
         if (showTutorial) {
-            const timer = setTimeout(() => {
+            const tutorialTimer = setTimeout(() => {
                 setShowTutorial(false);
             }, 10000); // 10s
-            return () => clearTimeout(timer);
+
+            return () => clearTimeout(tutorialTimer);
         }
     }, [showTutorial]);
 
@@ -19,6 +30,10 @@ export default function Controls() {
 
     return (
         <>
+        <div className={`tutorial ${showWelcome ? "visible" : "hidden"}`}>
+            <p>Welcome to Mystic Islands!</p>
+            <p>Get ready for an adventure...</p>
+        </div>
         <div className={`tutorial ${showTutorial ? "visible" : "hidden"}`}>
             <p>
                 Use 
