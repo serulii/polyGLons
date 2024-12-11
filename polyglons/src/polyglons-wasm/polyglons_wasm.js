@@ -1,145 +1,5 @@
 let wasm;
 
-const cachedTextDecoder = (typeof TextDecoder !== 'undefined' ? new TextDecoder('utf-8', { ignoreBOM: true, fatal: true }) : { decode: () => { throw Error('TextDecoder not available') } } );
-
-if (typeof TextDecoder !== 'undefined') { cachedTextDecoder.decode(); };
-
-let cachedUint8ArrayMemory0 = null;
-
-function getUint8ArrayMemory0() {
-    if (cachedUint8ArrayMemory0 === null || cachedUint8ArrayMemory0.byteLength === 0) {
-        cachedUint8ArrayMemory0 = new Uint8Array(wasm.memory.buffer);
-    }
-    return cachedUint8ArrayMemory0;
-}
-
-function getStringFromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
-}
-
-let cachedFloat32ArrayMemory0 = null;
-
-function getFloat32ArrayMemory0() {
-    if (cachedFloat32ArrayMemory0 === null || cachedFloat32ArrayMemory0.byteLength === 0) {
-        cachedFloat32ArrayMemory0 = new Float32Array(wasm.memory.buffer);
-    }
-    return cachedFloat32ArrayMemory0;
-}
-
-let WASM_VECTOR_LEN = 0;
-
-function passArrayF32ToWasm0(arg, malloc) {
-    const ptr = malloc(arg.length * 4, 4) >>> 0;
-    getFloat32ArrayMemory0().set(arg, ptr / 4);
-    WASM_VECTOR_LEN = arg.length;
-    return ptr;
-}
-
-function getArrayF32FromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    return getFloat32ArrayMemory0().subarray(ptr / 4, ptr / 4 + len);
-}
-/**
- * Gets a raw mesh representing water in a scene.
- *
- * Has interleaved position (floatx3), and color (floatx3) attributes.
- * @param {number} time_millis
- * @param {number} height_scale
- * @param {number} water_radius
- * @param {Float32Array} position
- * @param {Float32Array} green
- * @param {Float32Array} blue
- * @returns {Float32Array}
- */
-export function water_buf(time_millis, height_scale, water_radius, position, green, blue) {
-    const ptr0 = passArrayF32ToWasm0(position, wasm.__wbindgen_malloc);
-    const len0 = WASM_VECTOR_LEN;
-    const ptr1 = passArrayF32ToWasm0(green, wasm.__wbindgen_malloc);
-    const len1 = WASM_VECTOR_LEN;
-    const ptr2 = passArrayF32ToWasm0(blue, wasm.__wbindgen_malloc);
-    const len2 = WASM_VECTOR_LEN;
-    const ret = wasm.water_buf(time_millis, height_scale, water_radius, ptr0, len0, ptr1, len1, ptr2, len2);
-    var v4 = getArrayF32FromWasm0(ret[0], ret[1]).slice();
-    wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
-    return v4;
-}
-
-/**
- * @returns {number}
- */
-export function water_buf_stride_floats() {
-    const ret = wasm.water_buf_stride_floats();
-    return ret >>> 0;
-}
-
-/**
- * @returns {number}
- */
-export function water_buf_position_size() {
-    const ret = wasm.water_buf_color_size();
-    return ret >>> 0;
-}
-
-/**
- * @returns {number}
- */
-export function water_buf_position_offset() {
-    const ret = wasm.water_buf_position_offset();
-    return ret >>> 0;
-}
-
-/**
- * @returns {number}
- */
-export function water_buf_color_size() {
-    const ret = wasm.water_buf_color_size();
-    return ret >>> 0;
-}
-
-/**
- * @returns {number}
- */
-export function water_buf_color_offset() {
-    const ret = wasm.water_buf_color_offset();
-    return ret >>> 0;
-}
-
-const Perlin3dFinalization = (typeof FinalizationRegistry === 'undefined')
-    ? { register: () => {}, unregister: () => {} }
-    : new FinalizationRegistry(ptr => wasm.__wbg_perlin3d_free(ptr >>> 0, 1));
-
-export class Perlin3d {
-
-    __destroy_into_raw() {
-        const ptr = this.__wbg_ptr;
-        this.__wbg_ptr = 0;
-        Perlin3dFinalization.unregister(this);
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_perlin3d_free(ptr, 0);
-    }
-    constructor() {
-        const ret = wasm.perlin3d_new();
-        this.__wbg_ptr = ret >>> 0;
-        Perlin3dFinalization.register(this, this.__wbg_ptr, this);
-        return this;
-    }
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} z
-     * @returns {number}
-     */
-    sample(x, y, z) {
-        const ret = wasm.perlin3d_sample(this.__wbg_ptr, x, y, z);
-        return ret;
-    }
-}
-
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {
@@ -184,9 +44,6 @@ function __wbg_get_imports() {
         table.set(offset + 3, false);
         ;
     };
-    imports.wbg.__wbindgen_throw = function(arg0, arg1) {
-        throw new Error(getStringFromWasm0(arg0, arg1));
-    };
 
     return imports;
 }
@@ -198,8 +55,6 @@ function __wbg_init_memory(imports, memory) {
 function __wbg_finalize_init(instance, module) {
     wasm = instance.exports;
     __wbg_init.__wbindgen_wasm_module = module;
-    cachedFloat32ArrayMemory0 = null;
-    cachedUint8ArrayMemory0 = null;
 
 
     wasm.__wbindgen_start();

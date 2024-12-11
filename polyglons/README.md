@@ -8,7 +8,7 @@ Install the dependencies.
 npm install
 ```
 
-The following command compiles and replaces the contents of src/polyglons-wasm
+The following command compiles and replaces the contents of `src/polyglons-wasm`
 with the artifacts. Make sure to run this command and commit the results.
 
 ```
@@ -21,7 +21,7 @@ Launch the development server.
 npm start
 ```
 
-You can navigate to localhost:3000 in your browser and explore the islands. The
+You can navigate to `localhost:3000` in your browser and explore the islands. The
 controls are explained in the on-screen text.
 
 ## Known bugs
@@ -30,7 +30,7 @@ There are no known bugs to report.
 
 ## Dependencies
 
-Dependencies are marked unused if they are included in the source code (e.g. because they came in the with `create-react-app` stencil), but did not end up being effectively used by us.
+Dependencies are marked unused if they are included in the source code (e.g. because they came in the with `create-react-app` stencil), but did not end up being effectively used by us. Removing them would be unnecessarily invasive.
 
 ### npm dependencies
 
@@ -52,14 +52,9 @@ Dependencies are marked unused if they are included in the source code (e.g. bec
 
 ### Rust dependencies
 
-* `itertools` unused
-* `noise` used for sampling perlin noise for terrain generation
+* `noise` used for sampling Perlin noise for terrain generation
 * `rustc-hash` a faster hash map
-* `serde` unused
-* `serde-json` unused
 * `wasm-bindgen` make rust code callable from the web app
-* `getrandom` unused
-* `rand` unused
+* `getrandom` unused but included so that we can enable js feature
 * `nalgebra` linear algebra library, comparable to GLM
-* `web-sys` unused
 * `bytemuck` make the creation of flat float buffers easier
