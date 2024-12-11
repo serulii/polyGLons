@@ -15,6 +15,8 @@ const models = {
     FOREST: [
         await loadModel('models/tree.glb'),
         await loadModel('models/tree2.glb'),
+        await loadModel('models/tree3.gltf'),
+        await loadModel('models/tree3.gltf'),
         await loadModel('models/rock1.gltf'),
         await loadModel('models/rock2.gltf'),
         await loadModel('models/rock3.gltf'),
@@ -22,6 +24,7 @@ const models = {
     DESERT: [
         await loadModel('/models/cactus1.glb'),
         await loadModel('/models/ruins.gltf'),
+        await loadModel('/models/palm.gltf'),
         await loadModel('/models/prickly_pear.gltf'),
         await loadModel('models/rock3_red.gltf'),
     ],

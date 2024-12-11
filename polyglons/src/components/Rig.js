@@ -232,8 +232,8 @@ export default function Rig({
                 factor
             );
             if (isMoving.current) {
-                const frequency = 1; // bobbing frequency
-                const amplitude = 0.015; // bobbing height
+                const frequency = 1.5; // bobbing frequency
+                const amplitude = 0.01; // bobbing height
 
                 bobbingPhase.current += delta * frequency * Math.PI * 2;
                 const offset = Math.sin(bobbingPhase.current) * amplitude;

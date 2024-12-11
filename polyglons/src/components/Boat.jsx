@@ -114,9 +114,12 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
 
             if (newRotation) {
                 vel.x += dx;
-                vel.z += dz;    
+                vel.z += dz;
                 const angle = Math.atan2(dx, dz);
-                targetQuaternion.current.setFromAxisAngle(new THREE.Vector3(0.0, 1.0, 0.0), angle);    
+                targetQuaternion.current.setFromAxisAngle(
+                    new THREE.Vector3(0.0, 1.0, 0.0),
+                    angle
+                );
             }
 
             // interpolate current rotation towards target using slerp
@@ -142,9 +145,9 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
         }
     });
 
-    const {gl} = useThree();
+    const { gl } = useThree();
     gl.shadowMap.enabled = true;
-    console.log()
+    console.log();
     modelRef.castShadow = true;
     scene.castShadow = true;
 
@@ -154,10 +157,10 @@ const BoatControls = ({ ortho, boundingBoxes, modelRef }) => {
     });
 
     if (modelRef.current) {
-        modelRef.current.traverse(o => {
+        modelRef.current.traverse((o) => {
             o.castShadow = true;
             o.receiveShadow = true;
-        })
+        });
     }
 
     return initialized ? <primitive ref={modelRef} object={scene} /> : null;
