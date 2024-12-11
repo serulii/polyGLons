@@ -67,6 +67,7 @@ function Scene() {
                     setBoundingBoxes={setBoundingBoxes}
                     cameraAnimationState={cameraAnimationState}
                     ortho={ortho}
+                    modelRef={modelRef}
                 />
                 <Water 
                     useBoatPos={ortho}
