@@ -46,7 +46,7 @@ export default function Terrain({ setBoundingBoxes, cameraAnimationState, ortho,
 
     useEffect(() => {
         function onKeyDown(event) {
-            if (['Space'].includes(event.code)) {
+            if (['Space'].includes(event.code) && ortho) {
                 setCounter(!counter);
             }
         }
