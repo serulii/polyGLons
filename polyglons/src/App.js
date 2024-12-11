@@ -75,7 +75,7 @@ function Scene() {
                 {<Skybox cameraAnimationState={cameraAnimationState} />}
                 {!ortho && (
                     <>
-                        <FirstPersonControls makeDefault lookSpeed={0.2} />
+                        <FirstPersonControls makeDefault lookSpeed={0.2} movementSpeed={0.02} />
                         <FlyControls autoForward={false} movementSpeed={2} />
                     </>
                 )}

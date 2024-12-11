@@ -179,7 +179,7 @@ export default function Rig({
     const isOnBoat = useRef(true); // if on boat
     const isMoving = useRef(false); // whether user is moving
     const bobbingPhase = useRef(0); // phase for sine wave
-    const adjustedHeight = 1.3;
+    const adjustedHeight = 0.8;
     const prevPosition = useRef({
         x: camera.position.x,
         y: camera.position.y + adjustedHeight,
