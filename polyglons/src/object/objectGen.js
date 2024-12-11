@@ -23,7 +23,7 @@ const models = {
         await loadModel('/models/cactus1.glb'),
         await loadModel('/models/ruins.gltf'),
         await loadModel('/models/prickly_pear.gltf'),
-        await loadModel('models/rock3.gltf'),
+        await loadModel('models/rock3_red.gltf'),
     ],
     SNOWY: [await loadModel('/models/snowy_tree_1.gltf')],
     BLOSSOM: [
